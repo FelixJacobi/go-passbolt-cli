@@ -162,8 +162,19 @@ associations. The server controls field visibility and plugin availability.
 SCIM linkage appears in list JSON; this does not expose custom SSO claim mappings
 or server-internal directory records.
 
-Optional profile, role and timestamp columns are null in CEL expressions when
+Optional profile,role and timestamp columns are null in CEL expressions when
 not returned by the server, and render as blank table cells instead of panicking.
+
+### Request recovery mail or renew an invitation
+
+Using your configured connection, request account recovery mail by username:
+
+```sh
+pbolt recover user --username ada@example.com
+```
+
+For an account that has not completed setup, this renews the invitation.
+Success does not confirm that an account exists or that an email was delivered.
 
 ---
 
