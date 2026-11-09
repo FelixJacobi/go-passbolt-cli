@@ -176,6 +176,18 @@ pbolt recover user --username ada@example.com
 For an account that has not completed setup, this renews the invitation.
 Success does not confirm that an account exists or that an email was delivered.
 
+### Change a group member's manager role
+
+Promote an existing member to manager, or demote a manager while retaining membership:
+
+```sh
+pbolt update group --id GROUP_UUID --manager USER_UUID
+pbolt update group --id GROUP_UUID --user USER_UUID
+```
+
+Demotion requires the SDK to send an explicit `is_admin: false` membership update.
+The command retains the normal dry-run and secret re-encryption workflow.
+
 ---
 
 ## ⚖️ Trademark Notice
