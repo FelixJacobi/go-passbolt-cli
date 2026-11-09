@@ -10,14 +10,18 @@ import (
 )
 
 // UserGetCmd Gets a Passbolt User
-var UserGetCmd = &cobra.Command{
-	Use:   "user",
-	Short: "Gets a Passbolt User",
-	Long:  `Gets a Passbolt User`,
-	RunE:  UserGet,
+var UserGetCmd = makeUserGetCmd()
+
+func makeUserGetCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "user",
+		Short: "Gets a Passbolt User",
+		Long:  `Gets a Passbolt User`,
+		RunE:  UserGet,
+	}
 }
 
-func init() {
+func configureGet() {
 	UserGetCmd.Flags().String("id", "", "id of User to Get")
 	UserGetCmd.Flags().Bool("scim-entry", false, "Include SCIM directory linkage (administrator only)")
 
@@ -78,3 +82,5 @@ func printUserDetail(u api.User, jsonOutput bool) error {
 	}
 	return nil
 }
+
+func init() { configureGet() }

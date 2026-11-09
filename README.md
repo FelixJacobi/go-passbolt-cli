@@ -73,6 +73,50 @@ pbolt configure --serverAddress https://passbolt.example.org --userPassword 'you
 
 The configuration file is maintained with strict `0600` permissions (readable only by you) in a `0700` directory.
 
+### Interactive authentication agent (opt-in)
+
+Use `pbolt --agent list user` to start an in-memory authentication agent. It
+asks for approval for each command, and asks for your passphrase and TOTP when
+needed. Later commands reuse the authenticated session. Authentication expires
+after one hour without approved use; active use resets that idle timer. Server
+session expiry and MFA policy still apply.
+
+To enable this for your configuration, add these settings to your TOML file:
+
+```toml
+agent = true
+agent-dialog = "auto"
+```
+
+Keep `userPassword` and your MFA seed out of the file to enter them interactively.
+`--agent=false` uses ordinary CLI authentication for one invocation.
+
+The default dialog backend uses Zenity or KDialog under X.org/Wayland, system
+dialogs on macOS and Windows, or a full-terminal dialog when no desktop helper
+is available. Install `zenity` or `kdialog` for Linux desktop dialogs. Select
+`--agent-dialog=terminal` to always use the terminal, or
+`--agent-dialog=pinentry --agent-pinentry=/path/to/pinentry` to use GnuPG's
+pinentry helper. An explicit denial never falls back to another dialog.
+Pipelines work: approval uses the desktop or controlling terminal, leaving the
+command's stdin and stdout available for data. Without either UI, agent access
+fails. `--yes` does not bypass approval.
+
+```sh
+pbolt --agent list user --json | jq .
+pbolt agent status
+pbolt agent lock   # clear the session matching this configuration
+pbolt agent stop   # clear all cached sessions and stop the process
+```
+
+The agent runs Passbolt operations itself and keeps private keys and session
+cookies inside its process. `exec` receives only the requested resource values
+and launches your program in the foreground, preserving its terminal. Cached
+sessions are isolated by server, account key and authentication/transport policy.
+The agent never writes cached authentication to disk or a credential store.
+`--debug` is unavailable in agent mode because SDK debug logging exposes secrets.
+After upgrading the CLI, stop an older running agent before using the new binary.
+See [SECURITY.md](SECURITY.md) for the local security boundary.
+
 ---
 
 ## 💡 Usage
