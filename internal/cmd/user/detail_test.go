@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/passbolt/go-passbolt/api"
+	"github.com/pbolt-dev/go-pbolt/api"
 )
 
 func TestUserDetailOutputIncludesState(t *testing.T) {
