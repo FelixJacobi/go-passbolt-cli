@@ -100,4 +100,4 @@ require (
 
 // replace github.com/passbolt/go-passbolt => ../go-passbolt
 
-replace github.com/passbolt/go-passbolt => github.com/FelixJacobi/go-passbolt v0.8.5-0.20261109142934-85dddd011460
+replace github.com/passbolt/go-passbolt => github.com/FelixJacobi/go-passbolt v0.8.5-0.20261109220211-5f9828bfe073

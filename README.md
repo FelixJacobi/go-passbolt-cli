@@ -183,3 +183,14 @@ passbolt update user --id USER_UUID --disabled=false
 
 Omitting `--disabled` leaves the account state unchanged. Account state changes
 cannot be combined with `--firstname`, `--lastname`, or `--role` in one command.
+
+## Request recovery mail or renew an invitation
+
+Using your configured connection, request account recovery mail by username:
+
+```sh
+passbolt recover user --username ada@example.com
+```
+
+For an account that has not completed setup, this renews the invitation.
+Success does not confirm that an account exists or that an email was delivered.
