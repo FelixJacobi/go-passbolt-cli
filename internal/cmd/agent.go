@@ -19,6 +19,7 @@ import (
 
 	"github.com/ProtonMail/gopenpgp/v3/crypto"
 	"github.com/passbolt/go-passbolt-cli/internal/agent"
+	"github.com/passbolt/go-passbolt-cli/internal/browserauth"
 	"github.com/passbolt/go-passbolt-cli/internal/util"
 	"github.com/passbolt/go-passbolt/api"
 	"github.com/spf13/cobra"
@@ -34,9 +35,10 @@ var invocationEnvironment []string
 func installAgent(root *cobra.Command) {
 	flags := root.PersistentFlags()
 	flags.Bool("agent", false, "Use the opt-in in-memory authentication agent")
+	flags.String("agent-auth", "password", "Agent authentication: password or browser")
 	flags.String("agent-dialog", "auto", "Agent dialogs: auto, terminal, or pinentry")
 	flags.String("agent-pinentry", "", "Pinentry executable (only with --agent-dialog=pinentry)")
-	for _, key := range []string{"agent", "agent-dialog", "agent-pinentry"} {
+	for _, key := range []string{"agent", "agent-auth", "agent-dialog", "agent-pinentry"} {
 		_ = viper.BindPFlag(key, flags.Lookup(key))
 	}
 	root.PersistentPreRunE = routeAgent
@@ -45,7 +47,7 @@ func installAgent(root *cobra.Command) {
 		action := action
 		controls.AddCommand(&cobra.Command{Use: action, Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, _ []string) error { return callAgent(cmd, action) }})
 	}
-	root.AddCommand(controls)
+	root.AddCommand(controls, newBrowserCommand())
 }
 func authenticatedCommand(cmd *cobra.Command) bool {
 	for cmd.Parent() != nil && cmd.Parent().Parent() != nil {
@@ -60,6 +62,13 @@ func authenticatedCommand(cmd *cobra.Command) bool {
 	return false
 }
 func routeAgent(cmd *cobra.Command, _ []string) error {
+	if mode := viper.GetString("agent-auth"); mode != "password" && mode != "browser" {
+		return fmt.Errorf("agent-auth must be password or browser")
+	}
+	if viper.GetString("agent-auth") == "browser" && !viper.GetBool("agent") && authenticatedCommand(cmd) {
+		return fmt.Errorf("browser authentication requires --agent")
+	}
+
 	if inAgent || isCredentialCommand(cmd) || !viper.GetBool("agent") || !authenticatedCommand(cmd) {
 		return nil
 	}
@@ -153,7 +162,7 @@ func agentIdentity(settings map[string]any) (key, label string, err error) {
 	fingerprint := publicKey.GetFingerprint()
 	publicKey.ClearPrivateParams()
 	identity := map[string]any{}
-	for _, name := range []string{"serverAddress", "userPrivateKey", "userPassword", "serverVerifyToken", "serverVerifyEncToken", "mfaMode", "mfaTotpToken", "totpToken", "mfaTotpOffset", "totpOffset", "mfaRetrys", "mfaDelay", "tlsSkipVerify", "tlsClientPrivateKey", "tlsClientCert"} {
+	for _, name := range []string{"agent-auth", "serverAddress", "userPrivateKey", "userPassword", "serverVerifyToken", "serverVerifyEncToken", "mfaMode", "mfaTotpToken", "totpToken", "mfaTotpOffset", "totpOffset", "mfaRetrys", "mfaDelay", "tlsSkipVerify", "tlsClientPrivateKey", "tlsClientCert"} {
 		identity[name] = config.Get(name)
 	}
 	// Proxy environment is transport policy too; it is added by the dispatcher.
@@ -194,10 +203,11 @@ type commandAgent struct {
 	sessions *agent.Sessions
 	clients  map[string]cachedClient
 	version  string
+	browser  *browserauth.Broker
 }
 
 func newCommandAgent() *commandAgent {
-	return &commandAgent{sessions: agent.NewSessions(time.Now), clients: make(map[string]cachedClient), version: rootCmd.Version}
+	return &commandAgent{sessions: agent.NewSessions(time.Now), clients: make(map[string]cachedClient), version: rootCmd.Version, browser: browserauth.NewBroker()}
 }
 func (a *commandAgent) Expire(ctx context.Context) { a.sessions.Expire(ctx) }
 func (a *commandAgent) Close(ctx context.Context)  { a.sessions.Close(ctx) }
@@ -327,12 +337,16 @@ func (a *commandAgent) Run(ctx context.Context, req agent.Request, in io.Reader,
 		if cached, ok := a.clients[key]; ok {
 			// Session checks happen before user code; a write is never retried.
 			if !cached.client.CheckSession(clientCtx) {
-				if err := cached.client.Login(clientCtx); err != nil {
+				if viper.GetString("agent-auth") == "browser" {
+					a.sessions.Lock(clientCtx, key)
+				} else if err := cached.client.Login(clientCtx); err != nil {
 					a.sessions.Lock(clientCtx, key)
 					return nil, util.ExplainAPIError("renewing agent session", err)
 				}
 			}
-			return cached.client, nil
+			if _, exists := a.clients[key]; exists {
+				return cached.client, nil
+			}
 		}
 		httpClient, err := util.GetHTTPClient()
 		if err != nil {
@@ -340,7 +354,12 @@ func (a *commandAgent) Run(ctx context.Context, req agent.Request, in io.Reader,
 		}
 		transport := &managedTransport{network: httpClient.Transport}
 		httpClient.Transport = transport
-		client, err := util.NewClientWithHTTP(clientCtx, httpClient)
+		var client *api.Client
+		if viper.GetString("agent-auth") == "browser" {
+			client, err = a.browserClient(clientCtx, httpClient)
+		} else {
+			client, err = util.NewClientWithHTTP(clientCtx, httpClient)
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -430,4 +449,68 @@ func (localLogoutTransport) RoundTrip(req *http.Request) (*http.Response, error)
 		return nil, fmt.Errorf("local cleanup transport only permits logout")
 	}
 	return &http.Response{StatusCode: http.StatusOK, Header: make(http.Header), Body: io.NopCloser(strings.NewReader(`{"header":{"status":"success","code":200},"body":null}`)), Request: req}, nil
+}
+
+// Browser only touches the synchronized handoff broker, never command globals.
+func (a *commandAgent) Browser(_ context.Context, req agent.Request) (agent.Message, error) {
+	if req.Action == "browser-pending" {
+		pending, err := a.browser.Pending()
+		if err != nil {
+			return agent.Message{}, err
+		}
+		data, err := json.Marshal(pending)
+		return agent.Message{Kind: "browser", Data: data}, err
+	}
+	var envelope browserauth.Envelope
+	if len(req.BrowserData) > browserauth.MaxFrame {
+		return agent.Message{}, fmt.Errorf("browser message too large")
+	}
+	if err := json.Unmarshal(req.BrowserData, &envelope); err != nil {
+		return agent.Message{}, fmt.Errorf("invalid browser response")
+	}
+	return agent.Message{Kind: "browser"}, a.browser.Submit(envelope)
+}
+func (a *commandAgent) browserClient(ctx context.Context, httpClient *http.Client) (*api.Client, error) {
+	armor := viper.GetString("userPrivateKey")
+	key, err := crypto.NewKeyFromArmored(armor)
+	if err != nil {
+		return nil, fmt.Errorf("reading account key")
+	}
+	fingerprint := key.GetFingerprint()
+	key.ClearPrivateParams()
+	util.Eprintln("In the Passbolt extension, choose Authorize CLI from its context menu, then approve this account.")
+	payload, verifier, err := a.browser.Authorize(ctx, viper.GetString("serverAddress"), fingerprint)
+	if err != nil {
+		return nil, err
+	}
+	client, err := api.NewClient(httpClient, "", viper.GetString("serverAddress"), payload.PrivateKey, "")
+	payload.PrivateKey = ""
+	if err != nil {
+		return nil, fmt.Errorf("reading browser account key")
+	}
+	success := false
+	defer func() {
+		if !success {
+			client.Close()
+		}
+	}()
+	actual, err := client.GetUserPrivateKeyCopy()
+	if err != nil {
+		return nil, err
+	}
+	same := strings.EqualFold(actual.GetFingerprint(), fingerprint)
+	actual.ClearPrivateParams()
+	if !same {
+		return nil, fmt.Errorf("browser returned a different account key")
+	}
+	if token := viper.GetString("serverVerifyToken"); token != "" {
+		if err := client.VerifyServer(ctx, token, viper.GetString("serverVerifyEncToken")); err != nil {
+			return nil, fmt.Errorf("verifying browser authorization server: %w", err)
+		}
+	}
+	if err = client.LoginWithBrowserGrant(ctx, api.BrowserGrant{Token: payload.Grant, UserID: payload.UserID, Verifier: verifier}); err != nil {
+		return nil, fmt.Errorf("browser authorization failed")
+	}
+	success = true
+	return client, nil
 }
