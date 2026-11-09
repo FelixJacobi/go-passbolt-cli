@@ -11,15 +11,19 @@ import (
 )
 
 // UserListCmd Lists a Passbolt User
-var UserListCmd = &cobra.Command{
-	Use:     "user",
-	Short:   "Lists Passbolt Users",
-	Long:    `Lists Passbolt Users`,
-	Aliases: []string{"users"},
-	RunE:    UserList,
+var UserListCmd = makeUserListCmd()
+
+func makeUserListCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:     "user",
+		Short:   "Lists Passbolt Users",
+		Long:    `Lists Passbolt Users`,
+		Aliases: []string{"users"},
+		RunE:    UserList,
+	}
 }
 
-func init() {
+func configureList() {
 	flags := UserListCmd.Flags()
 	flags.Bool("include-mfa", false, "Include MFA state (administrator only)")
 	flags.Bool("mfa-enabled", false, "Filter by MFA state; use --mfa-enabled=false for disabled MFA (administrator only)")
@@ -172,3 +176,5 @@ func parseUserListFlags(cmd *cobra.Command) (*userListConfig, error) {
 		celFilter:      celFilter,
 	}, nil
 }
+
+func init() { configureList() }

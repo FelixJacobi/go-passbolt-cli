@@ -11,14 +11,18 @@ import (
 )
 
 // UserUpdateCmd Updates a Passbolt User
-var UserUpdateCmd = &cobra.Command{
-	Use:   "user",
-	Short: "Updates a Passbolt User",
-	Long:  `Updates a Passbolt User`,
-	RunE:  UserUpdate,
+var UserUpdateCmd = makeUserUpdateCmd()
+
+func makeUserUpdateCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "user",
+		Short: "Updates a Passbolt User",
+		Long:  `Updates a Passbolt User`,
+		RunE:  UserUpdate,
+	}
 }
 
-func init() {
+func configureUpdate() {
 	UserUpdateCmd.Flags().String("id", "", "id of User to Update")
 	UserUpdateCmd.Flags().StringP("firstname", "f", "", "User FirstName")
 	UserUpdateCmd.Flags().StringP("lastname", "l", "", "User LastName")
@@ -90,3 +94,5 @@ func updateUserState(ctx context.Context, client *api.Client, id string, disable
 	}
 	return nil
 }
+
+func init() { configureUpdate() }
