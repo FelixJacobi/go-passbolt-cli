@@ -20,10 +20,13 @@ import (
 	"time"
 
 	"github.com/ProtonMail/gopenpgp/v3/crypto"
+	dockerclient "github.com/docker/docker-credential-helpers/client"
+	dockercredentials "github.com/docker/docker-credential-helpers/credentials"
 	"github.com/pbolt-dev/go-pbolt-cli/internal/agent"
 	"github.com/pbolt-dev/go-pbolt-cli/internal/util"
 	"github.com/pbolt-dev/go-pbolt/api"
 	"github.com/spf13/viper"
+	"io"
 )
 
 // Exercises real GPG authentication, the SDK's MFA callback and CLI handlers.
@@ -54,10 +57,11 @@ func TestAgentAuthenticationReuseApprovalAndExpiry(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	credentialSecret, err := cryptoClient.EncryptMessage(`{"password":"test-resource-secret","description":""}`)
+	credentialSecret, err := cryptoClient.EncryptMessage(`{"password":"hcloud-smoke-token","description":"  trimmed-value \r\n"}`)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	var logins, mfas, logouts, writes, secretReads atomic.Int32
 	var valid atomic.Bool
 	var failWrite atomic.Bool
@@ -261,7 +265,8 @@ done
 		t.Fatal(err)
 	}
 	for _, args := range [][]string{
-		{"get", "resource", "--id", "01234567-89ab-cdef-0123-456789abcdef", "--json"},
+		{"get", "resource", "--id", "01234567-89ab-cdef-0123-456789abcdef", "--raw"},
+		{"credential-helper", "aws", "get", "--id", "01234567-89ab-cdef-0123-456789abcdef"},
 		{"exec", "--", "/bin/true"},
 	} {
 		resourceRequest := req
@@ -299,7 +304,7 @@ done
 func testAgentBinary(t *testing.T, req agent.Request) {
 	t.Helper()
 	binary := filepath.Join(t.TempDir(), "passbolt")
-	build := exec.Command("go", "build", "-o", binary, "../..")
+	build := exec.Command("go", "build", "-buildvcs=false", "-o", binary, "../..")
 	if output, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("building CLI: %v: %s", err, output)
 	}
@@ -352,6 +357,124 @@ func testAgentBinary(t *testing.T, req agent.Request) {
 		t.Fatalf("foreground exec: %v %q", err, child)
 	}
 
+	const lookup = "protocol=https\nhost=git.example\npath=team/repo.git\n\n"
+	read := command("--agent", "--agent-dialog", "pinentry", "--agent-pinentry", req.Pinentry, "git-credential", "get")
+	read.Stdin = strings.NewReader(lookup)
+	credentials, err := read.Output()
+	if err != nil || string(credentials) != "username=token\npassword=hcloud-smoke-token\n\n" {
+		t.Fatalf("agent credential protocol: %v %q", err, credentials)
+	}
+	denied := command("--agent", "--agent-dialog", "pinentry", "--agent-pinentry", req.Pinentry, "git-credential", "get")
+	denied.Env = append(denied.Env, "TEST_DENY=1")
+	denied.Stdin = strings.NewReader(lookup)
+	rejected, err := denied.Output()
+	if err == nil || len(rejected) != 0 {
+		t.Fatalf("denied lookup released credentials: %v %q", err, rejected)
+	}
+	// Git itself appends the operation and consumes the helper's protocol output.
+	quote := func(value string) string { return "'" + strings.ReplaceAll(value, "'", "'\"'\"'") + "'" }
+	gitHelper := "!" + quote(binary) + " --config " + quote(config) + " --agent --agent-dialog pinentry --agent-pinentry " + quote(req.Pinentry) + " git-credential"
+	gitArgs := []string{"-c", "credential.helper=", "-c", "credential.helper=" + gitHelper, "-c", "credential.useHttpPath=true", "credential", "fill"}
+	git := exec.Command("git", gitArgs...)
+	git.Env = append(append([]string{}, read.Env...), "GIT_TERMINAL_PROMPT=0")
+	git.Stdin = strings.NewReader(lookup)
+	filled, err := git.Output()
+	if err != nil || !strings.Contains(string(filled), "password=hcloud-smoke-token\n") {
+		t.Fatalf("git credential fill: %v %q", err, filled)
+	}
+	for _, operation := range []string{"store", "erase"} {
+		noop := command("--agent", "--agent-dialog", "pinentry", "--agent-pinentry", "missing-helper", "git-credential", operation)
+		noop.Stdin = strings.NewReader("password=ignored\n\n")
+		if output, err := noop.CombinedOutput(); err != nil || len(output) != 0 {
+			t.Fatalf("%s was not a no-op: %v %q", operation, err, output)
+		}
+	}
+
+	for _, protocol := range []string{"git", "docker"} {
+		alias := filepath.Join(filepath.Dir(binary), protocol+"-credential-passbolt")
+		if err := os.Symlink(binary, alias); err != nil {
+			t.Fatal(err)
+		}
+		argv := []string{"--config", config, "--agent", "--agent-dialog", "pinentry", "--agent-pinentry", req.Pinentry, "get"}
+		child := exec.Command(alias, argv...)
+		child.Env = read.Env
+		if protocol == "git" {
+			child.Stdin = strings.NewReader(lookup)
+		} else {
+			child.Stdin = strings.NewReader("registry.example\n")
+		}
+		output, err := child.Output()
+		if err != nil {
+			t.Fatalf("%s executable: %v", protocol, err)
+		}
+		if protocol == "git" {
+			if string(output) != "username=token\npassword=hcloud-smoke-token\n\n" {
+				t.Fatalf("Git executable: %q", output)
+			}
+		} else {
+			var fields map[string]string
+			if json.Unmarshal(output, &fields) != nil || fields["Username"] != "token" || fields["Secret"] != "hcloud-smoke-token" || fields["ServerURL"] != "registry.example" {
+				t.Fatalf("Docker executable: %s", output)
+			}
+		}
+	}
+	dockerProgram := func(actions ...string) dockerclient.Program {
+		args := append([]string{"--agent", "--agent-dialog", "pinentry", "--agent-pinentry", req.Pinentry, "credential-helper", "docker"}, actions...)
+		return &dockerClientProgram{command: command(args...)}
+	}
+	dockerCreds, err := dockerclient.Get(dockerProgram, "registry.example")
+	if err != nil || dockerCreds.Username != "token" || dockerCreds.Secret != "hcloud-smoke-token" {
+		t.Fatalf("official Docker client: %+v %v", dockerCreds, err)
+	}
+	if _, err := dockerclient.Get(dockerProgram, "missing-registry.example"); !dockercredentials.IsErrCredentialsNotFound(err) {
+		t.Fatalf("official Docker not-found: %v", err)
+	}
+
+	listed, err := command("--agent", "--agent-dialog", "pinentry", "--agent-pinentry", req.Pinentry, "credential-helper", "docker", "list").Output()
+	var registries map[string]string
+	if err != nil || json.Unmarshal(listed, &registries) != nil || registries["registry.example"] != "token" || len(registries) != 1 {
+		t.Fatalf("Docker list: %v %q", err, listed)
+	}
+	raw, err := command("--agent", "--agent-dialog", "pinentry", "--agent-pinentry", req.Pinentry, "get", "resource", "--id", "01234567-89ab-cdef-0123-456789abcdef", "--field", "password", "--raw").Output()
+	if err != nil || string(raw) != "hcloud-smoke-token" {
+		t.Fatalf("raw token: %v %q", err, raw)
+	}
+	trimmed, err := command("--agent", "--agent-dialog", "pinentry", "--agent-pinentry", req.Pinentry, "get", "resource", "--id", "01234567-89ab-cdef-0123-456789abcdef", "--field", "description", "--raw").Output()
+	if err != nil || string(trimmed) != "trimmed-value" {
+		t.Fatalf("raw whitespace trimming: %v %q", err, trimmed)
+	}
+	for _, protocol := range []string{"aws", "k8s"} {
+		output, err := command("--agent", "--agent-dialog", "pinentry", "--agent-pinentry", req.Pinentry, "credential-helper", protocol, "get", "--id", "01234567-89ab-cdef-0123-456789abcdef").Output()
+		if err != nil {
+			t.Fatalf("%s credentials: %v", protocol, err)
+		}
+		var fields map[string]any
+		if json.Unmarshal(output, &fields) != nil {
+			t.Fatalf("%s non-JSON output: %q", protocol, output)
+		}
+		if protocol == "aws" {
+			if fields["Version"] != float64(1) || fields["AccessKeyId"] != "token" || fields["SecretAccessKey"] != "hcloud-smoke-token" {
+				t.Fatalf("AWS credentials: %q", output)
+			}
+		} else {
+			status, ok := fields["status"].(map[string]any)
+			if !ok || status["token"] != "hcloud-smoke-token" || fields["apiVersion"] != "client.authentication.k8s.io/v1" {
+				t.Fatalf("Kubernetes credentials: %q", output)
+			}
+		}
+	}
+
+	for _, protocol := range []string{"aws", "k8s"} {
+		failed := command("--agent", "--agent-dialog", "pinentry", "--agent-pinentry", req.Pinentry, "credential-helper", protocol, "get", "--id", "44444444-4444-4444-4444-444444444444")
+		output, err := failed.Output()
+		if err == nil || len(output) != 0 {
+			t.Fatalf("%s failed lookup emitted output: %v %q", protocol, err, output)
+		}
+		if failure, ok := err.(*exec.ExitError); ok && strings.Contains(string(failure.Stderr), "hcloud-smoke-token") {
+			t.Fatal("cloud helper leaked API error payload")
+		}
+	}
+
 	status, err := command("agent", "status").CombinedOutput()
 	if err != nil || !strings.Contains(string(status), "expires") {
 		t.Fatalf("CLI status: %v %s", err, status)
@@ -360,3 +483,8 @@ func testAgentBinary(t *testing.T, req agent.Request) {
 		t.Fatalf("CLI stop: %v %s", err, output)
 	}
 }
+
+type dockerClientProgram struct{ command *exec.Cmd }
+
+func (p *dockerClientProgram) Input(input io.Reader)   { p.command.Stdin = input }
+func (p *dockerClientProgram) Output() ([]byte, error) { return p.command.Output() }

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"golang.org/x/sys/windows"
+	"golang.org/x/term"
 	"os"
 	"syscall"
 	"unicode/utf16"
@@ -12,14 +13,26 @@ import (
 	"unsafe"
 )
 
-func CurrentTerminal() string { return "console" }
+func CurrentTerminal() string {
+	file, err := os.OpenFile("CONIN$", os.O_RDWR, 0)
+	if err != nil {
+		return ""
+	}
+	defer file.Close()
+	if !term.IsTerminal(int(file.Fd())) {
+		return ""
+	}
+	return "console"
+}
 func (d Dialog) openTerminal() (*os.File, *os.File, func(), error) {
 	kernel := syscall.NewLazyDLL("kernel32.dll")
 	attached, _, _ := kernel.NewProc("AttachConsole").Call(uintptr(uint32(d.PID)))
-	if attached == 0 {
+	free := func() {}
+	if attached != 0 {
+		free = func() { kernel.NewProc("FreeConsole").Call() }
+	} else if CurrentTerminal() == "" {
 		return nil, nil, nil, fmt.Errorf("cannot attach requesting console")
 	}
-	free := func() { kernel.NewProc("FreeConsole").Call() }
 	in, err := os.OpenFile("CONIN$", os.O_RDWR, 0)
 	if err != nil {
 		free()
@@ -27,11 +40,15 @@ func (d Dialog) openTerminal() (*os.File, *os.File, func(), error) {
 	}
 	out, err := os.OpenFile("CONOUT$", os.O_RDWR, 0)
 	if err != nil {
-		_ = in.Close()
 		free()
+		in.Close()
 		return nil, nil, nil, err
 	}
-	return in, out, func() { _ = in.Close(); _ = out.Close(); free() }, nil
+	return in, out, func() {
+		in.Close()
+		out.Close()
+		free()
+	}, nil
 }
 func (d Dialog) desktop(ctx context.Context, title, prompt string, secret bool) (string, error) {
 	data, _ := json.Marshal(map[string]any{"title": title, "prompt": prompt, "secret": secret})

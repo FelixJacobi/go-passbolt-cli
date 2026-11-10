@@ -57,6 +57,7 @@ func Execute() {
 			rootCmd.Use = "pbolt"
 		}
 	}
+	os.Args = append([]string{os.Args[0]}, HelperArguments(os.Args[0], os.Args[1:])...)
 	cobra.OnInitialize(initConfig)
 	err := rootCmd.Execute()
 	// Last, so it covers the error line too. Not deferred: os.Exit skips defers.
