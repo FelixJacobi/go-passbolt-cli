@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/passbolt/go-passbolt/api"
+	"github.com/pbolt-dev/go-pbolt/api"
 )
 
 // groupColumns.Filter runs CEL over api.Group, including the int user_count

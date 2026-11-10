@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/passbolt/go-passbolt/api"
+	"github.com/pbolt-dev/go-pbolt/api"
 )
 
 // PrintPermissionTable must reject an unknown column with a clear error rather

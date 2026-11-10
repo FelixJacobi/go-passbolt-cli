@@ -47,7 +47,7 @@ sudo dpkg -i pbolt_*_linux_amd64.deb
 
 ### Via Go Install
 ```bash
-go install github.com/passbolt/go-passbolt-cli@latest
+go install github.com/pbolt-dev/go-pbolt-cli@latest
 ```
 *(Note: Installing via Go installs the binary using the Go module path. Release packages include tab completions and manpages).*
 

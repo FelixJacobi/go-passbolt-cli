@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/passbolt/go-passbolt-cli/internal/util"
-	"github.com/passbolt/go-passbolt/api"
+	"github.com/pbolt-dev/go-pbolt-cli/internal/util"
+	"github.com/pbolt-dev/go-pbolt/api"
 )
 
 // UserJSONOutput's lifecycle fields (active, deleted, disabled) must emit

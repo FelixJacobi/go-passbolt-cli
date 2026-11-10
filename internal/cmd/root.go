@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/passbolt/go-passbolt-cli/internal/util"
-	"github.com/passbolt/go-passbolt-cli/internal/util/securefile"
+	"github.com/pbolt-dev/go-pbolt-cli/internal/util"
+	"github.com/pbolt-dev/go-pbolt-cli/internal/util/securefile"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 

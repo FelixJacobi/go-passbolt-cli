@@ -11,7 +11,7 @@ import (
 
 	"golang.org/x/sys/windows"
 
-	"github.com/passbolt/go-passbolt-cli/internal/util/securefile/winacl"
+	"github.com/pbolt-dev/go-pbolt-cli/internal/util/securefile/winacl"
 )
 
 // hasPOSIXModes is false: an ACL, not the mode bits, decides who can read a file here.

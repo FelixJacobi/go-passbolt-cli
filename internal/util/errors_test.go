@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/passbolt/go-passbolt/api"
-	"github.com/passbolt/go-passbolt/helper"
+	"github.com/pbolt-dev/go-pbolt/api"
+	"github.com/pbolt-dev/go-pbolt/helper"
 )
 
 // TestSentinelsMatchableWhenWrapped documents the contract that callers and
