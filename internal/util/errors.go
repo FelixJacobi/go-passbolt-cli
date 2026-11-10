@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/passbolt/go-passbolt/helper"
+	"github.com/pbolt-dev/go-pbolt/helper"
 )
 
 // Sentinel errors for recurring CLI input-validation failures. They are

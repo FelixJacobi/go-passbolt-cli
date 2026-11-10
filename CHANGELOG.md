@@ -6,6 +6,18 @@ Releases before this file was introduced are documented in the [GitHub releases]
 
 ## [Unreleased]
 
+## [0.5.4] - 2026-11-10
+### Changed
+- Renamed Go module to `github.com/pbolt-dev/go-pbolt-cli`
+- Updated SDK dependency to `github.com/pbolt-dev/go-pbolt v0.8.5`
+- Adopted `pbolt` CLI branding and configuration compatibility
+
+### Maintenance
+- ci: updated `golangci-lint` to `v2.15` in GitHub Actions for Go 1.27 compatibility
+- ci: enabled Dependabot for Go modules and GitHub Actions workflows
+- Security: enabled Dependabot vulnerability alerts and automated security fixes
+
+
 ## [0.5.3] - 2026-11-05
 ### Added
 - PB-54610: Skip Resources this build cannot read in `list resource`

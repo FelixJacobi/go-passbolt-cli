@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/passbolt/go-passbolt-cli/internal/util"
+	"github.com/pbolt-dev/go-pbolt-cli/internal/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

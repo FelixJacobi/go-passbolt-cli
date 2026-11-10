@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/passbolt/go-passbolt/api"
+	"github.com/pbolt-dev/go-pbolt/api"
 )
 
 // benchResourceSizes mirrors the util-package tiers: small / large / enterprise

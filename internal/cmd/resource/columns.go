@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"cel.dev/cel-go/cel"
-	"github.com/passbolt/go-passbolt-cli/internal/util"
+	"github.com/pbolt-dev/go-pbolt-cli/internal/util"
 )
 
 func marshalMapForTable(m map[string]any) string {

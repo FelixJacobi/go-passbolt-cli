@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"cel.dev/cel-go/cel"
-	"github.com/passbolt/go-passbolt-cli/internal/util"
-	"github.com/passbolt/go-passbolt/api"
+	"github.com/pbolt-dev/go-pbolt-cli/internal/util"
+	"github.com/pbolt-dev/go-pbolt/api"
 )
 
 var folderColumns = util.NewColumnRegistry("folders", []util.ColumnSpec[api.Folder]{

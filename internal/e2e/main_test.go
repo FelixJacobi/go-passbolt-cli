@@ -12,10 +12,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/passbolt/go-passbolt-cli/internal/cmd"
-	"github.com/passbolt/go-passbolt-cli/internal/e2e/commands"
-	"github.com/passbolt/go-passbolt-cli/internal/e2e/server"
-	"github.com/passbolt/go-passbolt/api"
+	"github.com/pbolt-dev/go-pbolt-cli/internal/cmd"
+	"github.com/pbolt-dev/go-pbolt-cli/internal/e2e/commands"
+	"github.com/pbolt-dev/go-pbolt-cli/internal/e2e/server"
+	"github.com/pbolt-dev/go-pbolt/api"
 	"github.com/rogpeppe/go-internal/testscript"
 )
 

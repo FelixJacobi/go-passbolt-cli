@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/passbolt/go-passbolt-cli/internal/util"
+	"github.com/pbolt-dev/go-pbolt-cli/internal/util"
 	"github.com/spf13/viper"
 )
 

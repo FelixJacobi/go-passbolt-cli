@@ -1,8 +1,11 @@
-project_name: go-passbolt-cli
+version: 2
+
+project_name: go-pbolt-cli
 checksum:
   name_template: 'checksums.txt'
 builds:
-  - env: [CGO_ENABLED=0]
+  - id: pbolt
+    env: [CGO_ENABLED=0]
     flags:
       - -trimpath
     goos:
@@ -12,31 +15,32 @@ builds:
     goarch:
       - amd64
       - arm64
-    binary: passbolt
+    binary: pbolt
 archives:
-  - files:
+  - name_template: "pbolt_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
       - completion/*
       - man/*
     format_overrides:
       - goos: windows
-        format: zip
+        formats: [zip]
 release:
   draft: true
   header: |
     ## Release {{ .Tag }} - ({{ .Date }})
 nfpms:
-  - maintainer: Samuel Lorch <sam@soontm.de>
-    description: A CLI for Passbolt.
-    homepage: https://github.com/passbolt/go-passbolt-cli
+  - maintainer: pbolt contributors <https://github.com/pbolt-dev>
+    description: A CLI tool to interact with Passbolt.
+    homepage: https://github.com/pbolt-dev/go-pbolt-cli
     license: MIT
     contents:
-      - src: /home/runner/work/go-passbolt-cli/go-passbolt-cli/completion/bash
-        dst: /usr/share/bash-completion/completions/passbolt
-      - src: /home/runner/work/go-passbolt-cli/go-passbolt-cli/completion/zsh
-        dst: /usr/share/zsh/site-functions/_passbolt
-      - src: /home/runner/work/go-passbolt-cli/go-passbolt-cli/completion/fish
-        dst: /usr/share/fish/vendor_completions.d/passbolt.fish
-      - src: /home/runner/work/go-passbolt-cli/go-passbolt-cli/man/*
+      - src: completion/bash
+        dst: /usr/share/bash-completion/completions/pbolt
+      - src: completion/zsh
+        dst: /usr/share/zsh/site-functions/_pbolt
+      - src: completion/fish
+        dst: /usr/share/fish/vendor_completions.d/pbolt.fish
+      - src: man/*
         dst: /usr/share/man/man1/
     recommends:
       - bash_completion
@@ -44,18 +48,19 @@ nfpms:
       - deb
       - rpm
 brews:
-  - homepage: https://github.com/passbolt/go-passbolt-cli
+  - homepage: https://github.com/pbolt-dev/go-pbolt-cli
     license: "MIT"
     skip_upload: true
-    description: "A CLI tool to interact with Passbolt, a Open source Password Manager for Teams"
+    description: "A CLI tool to interact with Passbolt, an open source password manager for teams"
     directory: Formula
     install: |
-      bin.install "passbolt"
-      bash_completion.install "completion/bash" => "passbolt"
-      zsh_completion.install "completion/zsh" => "_passbolt"
-      fish_completion.install "completion/fish" => "passbolt.fish"
+      bin.install "pbolt"
+      # Compatibility symlink
+      bin.install_symlink "pbolt" => "passbolt"
+      bash_completion.install "completion/bash" => "pbolt"
+      zsh_completion.install "completion/zsh" => "_pbolt"
+      fish_completion.install "completion/fish" => "pbolt.fish"
       man1.install Dir["man/*"]
-      # ...
     repository:
-      owner: passbolt
+      owner: pbolt-dev
       name: homebrew-tap

@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"syscall"
 
-	"github.com/passbolt/go-passbolt-cli/internal/util/securefile/posixmode"
+	"github.com/pbolt-dev/go-pbolt-cli/internal/util/securefile/posixmode"
 )
 
 // hasPOSIXModes reports whether permission bits mean anything here.

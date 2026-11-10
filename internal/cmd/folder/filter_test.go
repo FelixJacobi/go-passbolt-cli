@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/passbolt/go-passbolt/api"
+	"github.com/pbolt-dev/go-pbolt/api"
 )
 
 // folderColumns.Filter runs CEL over api.Folder. Fixtures set Created/Modified

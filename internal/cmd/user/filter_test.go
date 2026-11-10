@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/passbolt/go-passbolt/api"
+	"github.com/pbolt-dev/go-pbolt/api"
 )
 
 // userColumns.Filter runs CEL over api.User. The first_name/last_name/role

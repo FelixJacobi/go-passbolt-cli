@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/passbolt/go-passbolt/api"
+	"github.com/pbolt-dev/go-pbolt/api"
 )
 
 // resourceColumns.Filter runs CEL over the *decrypted* resource fields (name,

@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/passbolt/go-passbolt-cli/internal/cmd/folder"
-	"github.com/passbolt/go-passbolt-cli/internal/cmd/resource"
+	"github.com/pbolt-dev/go-pbolt-cli/internal/cmd/folder"
+	"github.com/pbolt-dev/go-pbolt-cli/internal/cmd/resource"
 	"github.com/spf13/cobra"
 )
 
