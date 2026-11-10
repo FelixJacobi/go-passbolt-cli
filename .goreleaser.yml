@@ -64,6 +64,13 @@ builds:
       - amd64
       - arm64
     binary: docker-credential-passbolt
+  - id: passbolt-browser-host
+    main: ./cmd/passbolt-browser-host
+    env: [CGO_ENABLED=0]
+    flags: [-trimpath]
+    goos: [linux, windows, darwin]
+    goarch: [amd64, arm64]
+    binary: passbolt-browser-host
 archives:
   - name_template: "pbolt_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     files:
@@ -102,7 +109,7 @@ brews:
     description: "A CLI tool to interact with Passbolt, an open source password manager for teams"
     directory: Formula
     install: |
-      bin.install "pbolt", "git-credential-pbolt", "docker-credential-pbolt", "git-credential-passbolt", "docker-credential-passbolt"
+      bin.install "pbolt", "git-credential-pbolt", "docker-credential-pbolt", "git-credential-passbolt", "docker-credential-passbolt", "passbolt-browser-host"
       # Compatibility symlink
       bin.install_symlink "pbolt" => "passbolt"
       bash_completion.install "completion/bash" => "pbolt"
