@@ -4,6 +4,7 @@ import (
 	"github.com/pbolt-dev/go-pbolt-cli/internal/cmd/folder"
 	"github.com/pbolt-dev/go-pbolt-cli/internal/cmd/group"
 	"github.com/pbolt-dev/go-pbolt-cli/internal/cmd/resource"
+	"github.com/pbolt-dev/go-pbolt-cli/internal/cmd/settings"
 	"github.com/pbolt-dev/go-pbolt-cli/internal/cmd/user"
 	"github.com/spf13/cobra"
 )
@@ -22,4 +23,5 @@ func init() {
 	updateCmd.AddCommand(folder.FolderUpdateCmd)
 	updateCmd.AddCommand(group.GroupUpdateCmd)
 	updateCmd.AddCommand(user.UserUpdateCmd)
+	updateCmd.AddCommand(settings.NewUpdateCommand())
 }
