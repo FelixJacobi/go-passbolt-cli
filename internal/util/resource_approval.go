@@ -2,8 +2,8 @@ package util
 
 import (
 	"context"
-	"github.com/passbolt/go-passbolt/api"
-	"github.com/passbolt/go-passbolt/helper"
+	"github.com/pbolt-dev/go-pbolt/api"
+	"github.com/pbolt-dev/go-pbolt/helper"
 )
 
 // ResourceApproval is scoped to a serialized agent invocation and called before
