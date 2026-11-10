@@ -10,14 +10,18 @@ import (
 )
 
 // updateCmd represents the update command
-var updateCmd = &cobra.Command{
-	Use:     "update",
-	Short:   "Updates a Passbolt Entity",
-	Long:    `Updates a Passbolt Entity`,
-	Aliases: []string{"change"},
+var updateCmd = makeupdateCmd()
+
+func makeupdateCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:     "update",
+		Short:   "Updates a Passbolt Entity",
+		Long:    `Updates a Passbolt Entity`,
+		Aliases: []string{"change"},
+	}
 }
 
-func init() {
+func configureUpdate() {
 	rootCmd.AddCommand(updateCmd)
 	updateCmd.AddCommand(resource.ResourceUpdateCmd)
 	updateCmd.AddCommand(folder.FolderUpdateCmd)
@@ -25,3 +29,5 @@ func init() {
 	updateCmd.AddCommand(user.UserUpdateCmd)
 	updateCmd.AddCommand(settings.NewUpdateCommand())
 }
+
+func init() { configureUpdate() }
