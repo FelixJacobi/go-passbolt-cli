@@ -116,6 +116,18 @@ TOTP MFA is supported across three modes:
 | `interactive-totp` *(Default)* | Interactively prompts for TOTP code in your terminal. |
 | `noninteractive-totp` | Automatically generates TOTP codes using the `--mfaTotpToken` secret. |
 
+### Enable or Disable a User
+
+Administrators can disable an account without deleting it, or enable it again:
+
+```bash
+pbolt update user --id USER_UUID --disabled=true
+pbolt update user --id USER_UUID --disabled=false
+```
+
+Omitting `--disabled` leaves the account state unchanged. Account state changes
+cannot be combined with `--firstname`, `--lastname`, or `--role` in one command.
+
 ---
 
 ## 🤖 Automation & Scripting
