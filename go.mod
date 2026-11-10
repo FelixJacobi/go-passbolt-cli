@@ -5,7 +5,7 @@ go 1.27.3
 require (
 	cel.dev/cel-go v0.33.2
 	github.com/ProtonMail/gopenpgp/v3 v3.5.2
-	github.com/pbolt-dev/go-pbolt v0.8.4
+	github.com/pbolt-dev/go-pbolt v0.8.5
 	github.com/pterm/pterm v0.12.84
 	github.com/rogpeppe/go-internal v1.16.0
 	github.com/spf13/cobra v1.10.2
@@ -98,5 +98,4 @@ require (
 	google.golang.org/protobuf v1.36.12 // indirect
 )
 
-// replace github.com/pbolt-dev/go-pbolt => ../go-passbolt
-replace github.com/pbolt-dev/go-pbolt => ./go-passbolt
+
