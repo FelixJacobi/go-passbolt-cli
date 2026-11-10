@@ -6,6 +6,32 @@ Releases before this file was introduced are documented in the [GitHub releases]
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-10
+### Added
+- **Authentication Agent**: Opt-in in-memory authentication agent (`--agent`) reusing authenticated sessions behind interactive approval dialogs (desktop, terminal, pinentry) with idle expiry.
+- **Native Credential Helpers**:
+  - `git-credential-pbolt` (and `git-credential-passbolt`) Git credential helper matching HTTP(S) URLs against Passbolt resource URIs.
+  - `docker-credential-pbolt` (and `docker-credential-passbolt`) Docker credential helper using upstream Docker credentials interface.
+  - `credential-helper aws`: AWS `credential_process` integration.
+  - `credential-helper k8s`: Kubernetes `client-go` exec authentication integration.
+- **Raw Secret Output**: Added `--raw` flag and `--field` to `pbolt get resource` for pipeline integration without tables, JSON, or trailing newlines.
+- **Organization Settings**: Added commands to manage plugin organization settings: `pbolt get organization-settings`, `update organization-settings`, and `delete organization-settings`.
+- **User Management**:
+  - Reversible user account state management via `pbolt update user --active=true/false`.
+  - Added user recovery and invitation renewal commands (`pbolt recover user`).
+  - Exposed account state, optional MFA status, and SCIM directory linkage in user details.
+- **Group Management**:
+  - Exposed complete membership UUIDs (`membership_id`) separately from user UUIDs in group details and `--column MembershipID`.
+
+### Fixed
+- Fixed group manager demotion when updating group memberships to prevent accidental manager privilege retention.
+- Handled missing profile/role associations gracefully in user details.
+
+### Changed
+- Bumped `github.com/pbolt-dev/go-pbolt` dependency to `v0.9.0`.
+- Enhanced GoReleaser configuration to build helper binaries (`git-credential-pbolt`, `docker-credential-pbolt`, and compatibility aliases).
+
+
 ## [0.5.4] - 2026-11-10
 ### Changed
 - Renamed Go module to `github.com/pbolt-dev/go-pbolt-cli`
