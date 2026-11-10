@@ -1,173 +1,140 @@
-# go-passbolt-cli
+# go-pbolt-cli
 
-A CLI tool to interact with [Passbolt](https://www.passbolt.com), an open source password manager for teams.
+<p align="center">
+  <img src="https://raw.githubusercontent.com/pbolt-dev/.github/main/assets/pbolt-logo.svg" alt="pbolt logo" width="140" height="140" />
+</p>
 
-If you want to do something more complicated: [this Go module](https://github.com/passbolt/go-passbolt) to interact with Passbolt from Go might interest you.
+<p align="center">
+  <strong>Fast, automation-friendly CLI tool and credential helper compatible with Passbolt.</strong>
+</p>
 
-# API Compatibility
+<p align="center">
+  <a href="https://github.com/pbolt-dev/go-pbolt-cli/releases"><img src="https://img.shields.io/github/v/release/pbolt-dev/go-pbolt-cli?style=flat-square&color=0bddec" alt="Latest Release" /></a>
+  <a href="https://github.com/pbolt-dev/go-pbolt"><img src="https://img.shields.io/badge/Go%20SDK-go--pbolt-199ee9?style=flat-square&logo=go" alt="go-pbolt SDK" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-fdae15?style=flat-square" alt="License: MIT" /></a>
+</p>
 
-The Go CLI is designed to work with the latest Passbolt API version, and we strongly recommend keeping your API up to date.
+---
+
+## ⚡ Overview
+
+**pbolt** (`go-pbolt-cli`) is a community-driven CLI tool designed to interact with [Passbolt](https://www.passbolt.com), an open-source password manager for teams.
+
+It is built for developers, system administrators, and CI/CD automation pipelines that need reliable, scriptable secret management without compromising cryptographic security.
+
+If you are developing Go applications and need an API client, check out our SDK: [**`go-pbolt`**](https://github.com/pbolt-dev/go-pbolt).
+
+---
+
+## 🔒 API Compatibility
+
+`go-pbolt-cli` is fully wire-compatible with standard Passbolt server instances (Community and Pro).
 
 > [!IMPORTANT]
-> Compatibility is currently tested with Passbolt API 5.6.1 and later. Older versions are unsupported and may not work.
+> Compatibility is continuously tested against Passbolt API 5.6.1 and later versions.
 
-Support for 5.6.1 is not guaranteed indefinitely and the minimum supported API version may increase in future releases.
+---
 
-In addition, users should also make sure they are running the latest version of the Go CLI. A current client stays compatible with supported older API versions, but an older client is not guaranteed to work against a newer API.
+## 📦 Installation
 
-# Install
+### Download Pre-built Binary
+Download the archive or deb/rpm package for Linux, macOS, or Windows from our [Releases page](https://github.com/pbolt-dev/go-pbolt-cli/releases/latest).
 
-**Homebrew**
-
-    brew install passbolt/tap/go-passbolt-cli
-
-**Download Binary**
-
-Download the deb/rpm package or archive for your OS and architecture from the [latest release](https://github.com/passbolt/go-passbolt-cli/releases/latest).
-
-For deb/rpm, install via your distro's package manager (e.g. `dpkg -i`).
-
-For archives, tab completion and manpages will need to be installed manually.
-
-**Via Go**
-
-    go install github.com/passbolt/go-passbolt-cli@latest
-
-Note: This installs the binary as `go-passbolt-cli`. Tab completion and manpages will be missing.
-
-## Community Packages
-
-The following packages are maintained by the community and not by the Passbolt team.
-See [Repology](https://repology.org/project/passbolt-cli/versions) for available packages and versions.
-
-# Getting Started
-
-First, you need to set up basic information:
-
-- The server address,
-- your private key
-- and your password/passphrase.
-
-You have these options:
-
-- Save it in the config file using
- 
-```
-passbolt configure --serverAddress https://passbolt.example.org --userPassword '1234' --userPrivateKeyFile 'keys/privatekey.asc' 
+For Debian/Ubuntu:
+```bash
+sudo dpkg -i pbolt_*_linux_amd64.deb
 ```
 
-or
-
+### Via Go Install
+```bash
+go install github.com/passbolt/go-passbolt-cli@latest
 ```
-passbolt configure --serverAddress https://passbolt.example.org --userPassword '1234' --userPrivateKey '-----BEGIN PGP PRIVATE KEY BLOCK-----' 
-```
+*(Note: Installing via Go installs the binary using the Go module path. Release packages include tab completions and manpages).*
 
-- Set up environment variables
-- Provide the flags manually every time
+---
 
-Notes:
+## 🚀 Getting Started
 
-- You can set the private key using the flags `--userPrivateKey` or `--userPrivateKeyFile` where `--userPrivateKey` takes the actual private key and `--userPrivateKeyFile` loads the content of a file as the private key, `--userPrivateKeyFile` overwrites the value of `--userPrivateKey`.
-- You can also just store the `serverAddress` and your private key. If your password is not set it will prompt you for it every time.
-- Passwordless private keys are not supported.
-- MFA settings can also be saved permanently this way.
-
-## The config file
-
-`passbolt configure` writes to `$XDG_CONFIG_HOME/go-passbolt-cli/go-passbolt-cli.toml` (`~/.config/...` by default; `~/Library/Application Support/...` on macOS, `%AppData%\...` on Windows), or to the path given by `--config`.
-
-**It stores what you give it in cleartext** — your private key, its passphrase, your MFA seed and the server verification tokens. Anyone who can read the file can log in as you and decrypt every password you can see, so it is written readable and writable by you alone (mode `0600`), in a `0700` directory. The CLI repairs those permissions on the default file if it finds them loosened, and warns about a `--config` file it cannot vouch for rather than changing it. Permissions cannot protect the file everywhere, such as on a USB stick, a network share or a synced folder: see [SECURITY.md](SECURITY.md) for where to keep it.
-
-A symlink to one of your own files works, so dotfiles setups can keep the real file in a repository and link it into place; a link to a device or pipe is refused before anything is written, and a file another user owns is written with a warning on stderr.
-
-If you would rather not keep the secrets on disk, store only `serverAddress` and supply the rest through environment variables or flags; with no `userPassword` saved the CLI prompts for it each time.
-
-Note that `--debug` prints every stored setting, secrets included. It asks before doing so, and skips the dump entirely when it is not attached to a terminal unless you pass `--yes`.
-
-# Usage
-
-Generally, the structure of commands are like this:
+To get started, configure your server connection, private key, and credentials:
 
 ```bash
-passbolt action entity [arguments]
+pbolt configure --serverAddress https://passbolt.example.org --userPassword 'your-passphrase' --userPrivateKeyFile 'keys/privatekey.asc'
 ```
 
-`action` is the action you want to perform like creating, updating or deleting an entity.
-`entity` is a resource (e.g. password), folder, user or group that you want to apply an action to.
+Alternatively, you can supply your private key directly via `--userPrivateKey`:
+```bash
+pbolt configure --serverAddress https://passbolt.example.org --userPassword 'your-passphrase' --userPrivateKey '-----BEGIN PGP PRIVATE KEY BLOCK-----...'
+```
 
-In Passbolt a password is usually referred to as a "resource".
+### Configuration Files & Locations
+`pbolt configure` prioritizes modern XDG configuration directories:
+- **Primary:** `$XDG_CONFIG_HOME/pbolt/pbolt.toml` (`~/.config/pbolt/pbolt.toml`)
+- **Backward compatibility:** Existing configurations in `~/.config/go-passbolt-cli/go-passbolt-cli.toml` are automatically discovered and supported.
 
-To create a resource you can do the following, which will return the ID of the newly created resource:
+The configuration file is maintained with strict `0600` permissions (readable only by you) in a `0700` directory.
+
+---
+
+## 💡 Usage
+
+The CLI follows a standard command structure:
 
 ```bash
-passbolt create resource --name "Test Resource" --password "Strong Password"
+pbolt <action> <entity> [arguments]
 ```
 
-You can then list all users:
+- `<action>`: `create`, `get`, `list`, `update`, `delete`, `share`, etc.
+- `<entity>`: `resource` (passwords/secrets), `folder`, `user`, `group`.
 
+### Examples
+
+**Create a password resource:**
 ```bash
-passbolt list user
+pbolt create resource --name "Production Database" --password "super-secret-password"
 ```
 
-Note: You can adjust which columns should be listed using the flag `--column` or its short from `-c`,
-if you want multiple column then you need to specify this flag multiple times.
-
-For sharing, we will need to know how we want to share, for that there are these permission types:
-
-| Code | Meaning                    | 
-|------|----------------------------| 
-| `1`  | Read-only                  | 
-| `7`  | Can update                 | 
-| `15` | Owner                      |
-| `-1` | Delete existing permission | 
-
-Now, that we have a resource ID, know the IDs of other users and know about permission types, we can share the resource with them:
-
+**List users:**
 ```bash
-passbolt share resource --id id_of_resource_to_share --type type_of_permission --user id_of_user_to_share_with
+pbolt list user --column id,username,role
 ```
 
-Note: You can supply the users argument multiple times to share with multiple users.
-
-For sharing with groups the `--group` argument exists.
-
-# MFA
-
-You can set up MFA also using the configuration sub command. Only TOTP is supported. There are multiple modes for MFA: `none`, `interactive-totp` and `noninteractive-totp`.
-
-| Mode                  | Description                                                                                                                                                                                                       |
-|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `none`                | just errors if challenged for MFA.                                                                                                                                                                                |
-| `interactive-totp`    | prompts for interactive entry of TOTP Codes.                                                                                                                                                                      |
-| `noninteractive-totp` | automatically generates TOTP codes when challenged. It requires the `mfaTotpToken` flag to be set to your TOTP secret. You can configure the behavior using the `mfaDelay`, `mfaRetrys` and `mfaTotpOffset` flags |
-
-# Server Verification
-
-To enable server verification, you need to run `passbolt verify` once, after that the server will always be verified if the same config is used.
-
-# Scripting
-
-For scripting we have a `-j` or `--json` flag to convert the output for the `create`, `get` and `list` commands to JSON for easier parsing in scripts.
-
-Note: The JSON output does not cover error messages. You can detect errors by checking if the exit code is not 0.
-
-# Exposing Secrets to Subprocesses
-
-The `exec` command allows you to execute another command with environment variables that reference secrets stored in Passbolt.
-Any environment variables containing `passbolt://` references are automatically resolved to their corresponding secret values
-before the specified command is executed. This ensures that secrets are securely injected into the child process's environment
-without exposing them to the parent shell.
-
-For example:
-
+**Share a password:**
 ```bash
-export GITHUB_TOKEN=passbolt://<PASSBOLT_RESOURCE_ID_HERE>
-passbolt exec -- gh auth login
+pbolt share resource --id <RESOURCE_ID> --type 1 --user <USER_ID>
 ```
+*(Permission types: `1` = Read-only, `7` = Update, `15` = Owner, `-1` = Revoke).*
 
-This would resolve the `passbolt://` reference in `GITHUB_TOKEN` to its actual secret value and pass it to the GitHub process.
+---
 
-# Documentation
+## 🛡️ Multi-Factor Authentication (MFA)
 
-Usage for all subcommands is [here](https://github.com/passbolt/go-passbolt-cli/wiki/passbolt).
-And is also available via `man passbolt`
+TOTP MFA is supported across three modes:
+
+| Mode | Description |
+| :--- | :--- |
+| `none` | Fails immediately if MFA challenge is issued by server. |
+| `interactive-totp` *(Default)* | Interactively prompts for TOTP code in your terminal. |
+| `noninteractive-totp` | Automatically generates TOTP codes using the `--mfaTotpToken` secret. |
+
+---
+
+## 🤖 Automation & Scripting
+
+- **JSON Output:** Use `-j` or `--json` with `get`, `list`, and `create` for structured machine-readable output.
+- **Environment Secret Injection (`exec`):** Injects secrets directly into child processes without writing to shell history or disk:
+  ```bash
+  export GITHUB_TOKEN=passbolt://<RESOURCE_ID>
+  pbolt exec -- gh auth login
+  ```
+
+---
+
+## ⚖️ Trademark Notice
+
+*Passbolt is a registered trademark of Passbolt SA. **pbolt** is an independent community project and is not affiliated with, endorsed by, or sponsored by Passbolt SA.*
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).

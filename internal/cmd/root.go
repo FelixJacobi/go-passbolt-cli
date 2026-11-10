@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/passbolt/go-passbolt-cli/internal/util"
@@ -25,7 +26,7 @@ const defaultConfigFile = "go-passbolt-cli.toml"
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:          "passbolt",
+	Use:          "pbolt",
 	Short:        "A CLI tool to interact with Passbolt.",
 	Long:         `A CLI tool to interact with Passbolt.`,
 	SilenceUsage: true,
@@ -38,6 +39,14 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
+	if len(os.Args) > 0 {
+		binName := strings.TrimSuffix(strings.ToLower(filepath.Base(os.Args[0])), ".exe")
+		if strings.Contains(binName, "passbolt") {
+			rootCmd.Use = "passbolt"
+		} else {
+			rootCmd.Use = "pbolt"
+		}
+	}
 	err := rootCmd.Execute()
 	// Last, so it covers the error line too. Not deferred: os.Exit skips defers.
 	if err != nil {
@@ -157,12 +166,15 @@ func initConfig() {
 			util.Exit(1)
 		}
 
+		pboltDir := filepath.Join(confDir, "pbolt")
 		confDir = filepath.Join(confDir, "go-passbolt-cli")
 		_ = os.MkdirAll(confDir, 0o700)
 
 		newConfigPath = filepath.Join(confDir, defaultConfigFile)
+		viper.AddConfigPath(pboltDir)
 		viper.AddConfigPath(confDir)
 		viper.SetConfigType("toml")
+		viper.SetConfigName("pbolt")
 		viper.SetConfigName("go-passbolt-cli")
 	}
 
