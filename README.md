@@ -45,6 +45,12 @@ For Debian/Ubuntu:
 sudo dpkg -i haspr_*_linux_amd64.deb
 ```
 
+### Via APT (Debian / Ubuntu)
+```bash
+curl -fsSL https://haspr-dev.github.io/debian-repository/setup.sh | sudo bash
+sudo apt install haspr
+```
+
 ### Via Homebrew
 ```bash
 brew tap haspr-dev/tap
