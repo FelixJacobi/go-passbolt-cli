@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/pbolt-dev/go-pbolt-cli/internal/cmd"
+	"github.com/haspr-dev/go-haspr-cli/internal/cmd"
 )
 
 func main() {

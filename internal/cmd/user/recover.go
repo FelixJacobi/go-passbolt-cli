@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pbolt-dev/go-pbolt-cli/internal/util"
-	"github.com/pbolt-dev/go-pbolt/api"
+	"github.com/haspr-dev/go-haspr-cli/internal/util"
+	"github.com/haspr-dev/go-haspr/api"
 	"github.com/spf13/cobra"
 )
 

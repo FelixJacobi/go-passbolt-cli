@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pbolt-dev/go-pbolt-cli/internal/util/securefile"
+	"github.com/haspr-dev/go-haspr-cli/internal/util/securefile"
 	"github.com/spf13/viper"
 )
 

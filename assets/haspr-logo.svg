@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#182338"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+
+    <!-- Cyan / Teal Gradients -->
+    <linearGradient id="cyanShackleLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22e9f7"/>
+      <stop offset="100%" stop-color="#08b6d4"/>
+    </linearGradient>
+
+    <linearGradient id="cyanShackleTop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38fdf8"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+
+    <linearGradient id="cyanShackleRight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+
+    <linearGradient id="cyanBracketLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+
+    <!-- Deep Blue Body Gradients -->
+    <linearGradient id="blueBodyRight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+
+    <linearGradient id="blueStemLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
+    </linearGradient>
+
+    <linearGradient id="blueFacetCenter" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e40af"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <!-- Gold / Amber Lightning Gradients -->
+    <linearGradient id="goldBolt" x1="70%" y1="0%" x2="30%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="30%" stop-color="#facc15"/>
+      <stop offset="70%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+
+    <linearGradient id="goldBraceRight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+
+    <linearGradient id="goldBraceLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+
+    <linearGradient id="goldTip" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="160" fill="url(#bgGrad)"/>
+
+  <g id="pbolt-mark">
+    <!-- Padlock Shackle / P Upper Arch - Left -->
+    <polygon id="shackle-left" points="370.0,268.5 403.0,270.5 436.0,287.5 459.5,315.0 471.5,349.0 441.0,395.5 436.5,348.0 422.5,323.0 397.0,303.5 364.0,302.5 350.5,313.0 343.5,329.0 342.5,414.0 331.0,421.5 316.0,419.5 310.5,414.0 310.5,331.0 315.5,310.0 334.0,283.5" fill="url(#cyanShackleLeft)"/>
+
+    <!-- Padlock Shackle / P Upper Arch - Top / Center -->
+    <polygon id="shackle-top" points="444.0,268.5 611.5,269.0 491.5,448.0 562.5,454.0 533.0,499.5 519.0,507.5 513.0,504.5 513.0,509.5 486.0,520.5 479.5,515.0 487.0,492.5 402.5,492.0 491.5,354.0 477.5,306.0" fill="url(#cyanShackleTop)"/>
+
+    <!-- Padlock Shackle / P Upper Arch - Right -->
+    <polygon id="shackle-right" points="634.0,268.5 678.0,268.5 756.5,347.0 756.5,390.0 752.0,398.5 723.5,406.0 720.5,364.0 663.0,306.5 616.5,306.0" fill="url(#cyanShackleRight)"/>
+
+    <!-- Body / P Stem - Lower Right Loop / Bracket -->
+    <polygon id="body-right" points="720.0,364.5 724.0,405.5 753.0,397.5 755.0,388.5 756.5,392.0 756.5,521.0 677.0,600.5 517.0,600.5 543.0,563.5 662.0,563.5 719.5,506.0" fill="url(#blueBodyRight)"/>
+
+    <!-- Body / P Stem - Left Facet -->
+    <polygon id="body-left" points="267.0,436.5 372.0,498.5 368.0,512.5 392.5,516.0 374.0,537.5 345.0,533.5 338.5,546.0 341.5,569.0 293.0,613.5 280.0,609.5 266.5,589.0" fill="url(#cyanBracketLeft)"/>
+
+    <!-- Body / P Stem - Lower Shield / Stem Facet -->
+    <polygon id="body-stem" points="388.0,512.5 458.5,513.0 392.0,674.5 285.5,613.0 306.0,605.5 343.0,563.5 349.5,573.0 344.5,606.0 372.0,622.5 369.5,583.0 377.5,577.0 380.5,565.0 367.5,538.0 390.5,520.0" fill="url(#blueStemLeft)"/>
+
+    <!-- Body - Center Dark Contrast Facet -->
+    <polygon id="body-center" points="540.0,488.5 389.0,735.5 478.5,516.0 485.0,520.5 513.0,508.5 512.0,504.5 519.0,507.5" fill="url(#blueFacetCenter)"/>
+
+    <!-- Left Code Bracket Accent '{' -->
+    <polygon id="code-bracket-left" points="359.0,393.5 419.5,429.0 382.0,487.5 273.5,422.0 274.5,413.0 295.0,399.5 297.5,419.0 306.0,429.5 326.0,435.5 339.0,433.5 354.5,422.0" fill="url(#goldBraceLeft)"/>
+
+    <!-- Right Code Bracket Accent '}' -->
+    <polygon id="code-bracket-right" points="636.0,358.5 666.0,358.5 676.5,364.0 681.5,415.0 697.5,428.0 696.5,443.0 681.5,455.0 679.5,500.0 664.0,511.5 635.5,510.0 636.0,492.5 660.5,490.0 662.5,450.0 674.5,436.0 662.5,420.0 661.5,381.0 637.0,377.5" fill="url(#goldBraceRight)"/>
+
+    <!-- Central Lightning Bolt (Cutting through 'P') -->
+    <polygon id="lightning-bolt-main" points="605.0,282.5 539.5,424.0 619.0,425.5 618.5,429.0 396.0,730.5 564.5,454.0 562.0,449.5 493.5,447.0" fill="url(#goldBolt)" filter="url(#glow)"/>
+
+    <!-- Bottom Bolt Tip Accent -->
+    <polygon id="lightning-bolt-tip" points="502.0,619.5 503.5,727.0 425.0,728.5" fill="url(#goldTip)"/>
+  </g>
+</svg>

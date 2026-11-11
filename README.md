@@ -1,7 +1,7 @@
-# go-pbolt-cli
+# go-haspr-cli
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/pbolt-dev/.github/main/assets/pbolt-logo.svg" alt="pbolt logo" width="140" height="140" />
+  <img src="https://raw.githubusercontent.com/haspr-dev/.github/main/assets/haspr-logo.svg" alt="haspr logo" width="140" height="140" />
 </p>
 
 <p align="center">
@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/pbolt-dev/go-pbolt-cli/releases"><img src="https://img.shields.io/github/v/release/pbolt-dev/go-pbolt-cli?style=flat-square&color=0bddec" alt="Latest Release" /></a>
-  <a href="https://github.com/pbolt-dev/go-pbolt"><img src="https://img.shields.io/badge/Go%20SDK-go--pbolt-199ee9?style=flat-square&logo=go" alt="go-pbolt SDK" /></a>
+  <a href="https://github.com/haspr-dev/go-haspr-cli/releases"><img src="https://img.shields.io/github/v/release/haspr-dev/go-haspr-cli?style=flat-square&color=0bddec" alt="Latest Release" /></a>
+  <a href="https://github.com/haspr-dev/go-haspr"><img src="https://img.shields.io/badge/Go%20SDK-go--haspr-199ee9?style=flat-square&logo=go" alt="go-haspr SDK" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-fdae15?style=flat-square" alt="License: MIT" /></a>
 </p>
 
@@ -18,17 +18,17 @@
 
 ## ⚡ Overview
 
-**pbolt** (`go-pbolt-cli`) is a community-driven CLI tool designed to interact with [Passbolt](https://www.passbolt.com), an open-source password manager for teams.
+**haspr** (`go-haspr-cli`) is a community-driven CLI tool designed to interact with [Passbolt](https://www.passbolt.com), an open-source password manager for teams.
 
 It is built for developers, system administrators, and CI/CD automation pipelines that need reliable, scriptable secret management without compromising cryptographic security.
 
-If you are developing Go applications and need an API client, check out our SDK: [**`go-pbolt`**](https://github.com/pbolt-dev/go-pbolt).
+If you are developing Go applications and need an API client, check out our SDK: [**`go-haspr`**](https://github.com/haspr-dev/go-haspr).
 
 ---
 
 ## 🔒 API Compatibility
 
-`go-pbolt-cli` is fully wire-compatible with standard Passbolt server instances (Community and Pro).
+`go-haspr-cli` is fully wire-compatible with standard Passbolt server instances (Community and Pro).
 
 > [!IMPORTANT]
 > Compatibility is continuously tested against Passbolt API 5.6.1 and later versions.
@@ -38,16 +38,22 @@ If you are developing Go applications and need an API client, check out our SDK:
 ## 📦 Installation
 
 ### Download Pre-built Binary
-Download the archive or deb/rpm package for Linux, macOS, or Windows from our [Releases page](https://github.com/pbolt-dev/go-pbolt-cli/releases/latest).
+Download the archive or deb/rpm package for Linux, macOS, or Windows from our [Releases page](https://github.com/haspr-dev/go-haspr-cli/releases/latest).
 
 For Debian/Ubuntu:
 ```bash
-sudo dpkg -i pbolt_*_linux_amd64.deb
+sudo dpkg -i haspr_*_linux_amd64.deb
+```
+
+### Via Homebrew
+```bash
+brew tap haspr-dev/tap
+brew install haspr
 ```
 
 ### Via Go Install
 ```bash
-go install github.com/pbolt-dev/go-pbolt-cli@latest
+go install github.com/haspr-dev/go-haspr-cli@latest
 ```
 *(Note: Installing via Go installs the binary using the Go module path. Release packages include tab completions and manpages).*
 
@@ -58,24 +64,24 @@ go install github.com/pbolt-dev/go-pbolt-cli@latest
 To get started, configure your server connection, private key, and credentials:
 
 ```bash
-pbolt configure --serverAddress https://passbolt.example.org --userPassword 'your-passphrase' --userPrivateKeyFile 'keys/privatekey.asc'
+haspr configure --serverAddress https://passbolt.example.org --userPassword 'your-passphrase' --userPrivateKeyFile 'keys/privatekey.asc'
 ```
 
 Alternatively, you can supply your private key directly via `--userPrivateKey`:
 ```bash
-pbolt configure --serverAddress https://passbolt.example.org --userPassword 'your-passphrase' --userPrivateKey '-----BEGIN PGP PRIVATE KEY BLOCK-----...'
+haspr configure --serverAddress https://passbolt.example.org --userPassword 'your-passphrase' --userPrivateKey '-----BEGIN PGP PRIVATE KEY BLOCK-----...'
 ```
 
 ### Configuration Files & Locations
-`pbolt configure` prioritizes modern XDG configuration directories:
-- **Primary:** `$XDG_CONFIG_HOME/pbolt/pbolt.toml` (`~/.config/pbolt/pbolt.toml`)
-- **Backward compatibility:** Existing configurations in `~/.config/go-passbolt-cli/go-passbolt-cli.toml` are automatically discovered and supported.
+`haspr configure` prioritizes modern XDG configuration directories:
+- **Primary:** `$XDG_CONFIG_HOME/haspr/haspr.toml` (`~/.config/haspr/haspr.toml`)
+- **Backward compatibility:** Existing configurations in `~/.config/pbolt/pbolt.toml` and `~/.config/go-passbolt-cli/go-passbolt-cli.toml` are automatically discovered and supported.
 
 The configuration file is maintained with strict `0600` permissions (readable only by you) in a `0700` directory.
 
 ### Interactive authentication agent (opt-in)
 
-Use `pbolt --agent list user` to start an in-memory authentication agent. It
+Use `haspr --agent list user` to start an in-memory authentication agent. It
 asks for approval for each command, and asks for your passphrase and TOTP when
 needed. Later commands reuse the authenticated session. Authentication expires
 after one hour without approved use; active use resets that idle timer. Server
@@ -109,10 +115,10 @@ the full resource name in title/body and the UUID before fetching its secret.
 Bulk list/export operations retain command-level approval.
 
 ```sh
-pbolt --agent list user --json | jq .
-pbolt agent status
-pbolt agent lock   # clear the session matching this configuration
-pbolt agent stop   # clear all cached sessions and stop the process
+haspr --agent list user --json | jq .
+haspr agent status
+haspr agent lock   # clear the session matching this configuration
+haspr agent stop   # clear all cached sessions and stop the process
 ```
 
 The agent runs Passbolt operations itself and keeps private keys and session
@@ -133,7 +139,7 @@ See [SECURITY.md](SECURITY.md) for the local security boundary.
 Print one string field without tables, labels, JSON, or an added newline:
 
 ```sh
-pbolt get resource --id RESOURCE_UUID --field password --raw
+haspr get resource --id RESOURCE_UUID --field password --raw
 ```
 
 `--raw` defaults to the `password` field; `--field` selects another string field,
@@ -149,11 +155,11 @@ this Passbolt change does not implement or enable that hcloud setting:
 ```toml
 [[contexts]]
 name = "production"
-token_command = "pbolt get resource --id PROD_RESOURCE_UUID --field password --raw"
+token_command = "haspr get resource --id PROD_RESOURCE_UUID --field password --raw"
 
 [[contexts]]
 name = "staging"
-token_command = "pbolt get resource --id STAGING_RESOURCE_UUID --field password --raw"
+token_command = "haspr get resource --id STAGING_RESOURCE_UUID --field password --raw"
 ```
 
 Replace the placeholders with immutable UUIDs. API tokens remain in Passbolt;
@@ -161,15 +167,15 @@ they are not embedded in commands, environment variables, or consumer config.
 
 ### Native Git credentials
 
-The release includes `git-credential-pbolt` (and compatibility alias `git-credential-passbolt`). Configure Git with:
+The release includes `git-credential-haspr` (with compatibility aliases `git-credential-pbolt` and `git-credential-passbolt`). Configure Git with:
 
 ```sh
-git config --global credential.helper pbolt
+git config --global credential.helper haspr
 git config --global credential.useHttpPath true
 ```
 
-The equivalent direct command is `pbolt credential-helper git get`.
-`pbolt git-credential get` remains an alias for existing callers.
+The equivalent direct command is `haspr credential-helper git get`.
+`haspr git-credential get` remains an alias for existing callers.
 
 Git's `protocol`, `host`, optional `path` and username hint are matched against
 Passbolt resource URI metadata. Match requires the same HTTP(S) scheme and exact
@@ -187,19 +193,19 @@ returns no fields so Git can try another helper. `store` and `erase` are no-ops.
 
 ### Native Docker credentials
 
-The release includes `docker-credential-pbolt` (and compatibility alias `docker-credential-passbolt`), using the official
+The release includes `docker-credential-haspr` (with compatibility aliases `docker-credential-pbolt` and `docker-credential-passbolt`), using the official
 `github.com/docker/docker-credential-helpers/credentials` interface and runtime.
 Example Docker configuration:
 
 ```json
 {
   "credHelpers": {
-    "registry.example.com": "pbolt"
+    "registry.example.com": "haspr"
   }
 }
 ```
 
-`pbolt credential-helper docker get` accepts the registry server URL on stdin
+`haspr credential-helper docker get` accepts the registry server URL on stdin
 and returns Docker's `ServerURL`, `Username` and `Secret` JSON. `list` returns the
 standard server-to-username map and never decrypts passwords. Registry entries are
 HTTP(S) origin URIs (also `/v2/` endpoints), with Docker Hub's standard aliases
@@ -217,7 +223,7 @@ line-protocol characters are rejected before output. `--debug` is unavailable.
 
 ```ini
 [profile passbolt]
-credential_process = pbolt credential-helper aws get --id RESOURCE_UUID
+credential_process = haspr credential-helper aws get --id RESOURCE_UUID
 ```
 
 The AWS version-1 response maps the resource username to `AccessKeyId` and password
@@ -239,7 +245,7 @@ users:
     user:
       exec:
         apiVersion: client.authentication.k8s.io/v1
-        command: pbolt
+        command: haspr
         args: [credential-helper, k8s, get, --id, RESOURCE_UUID]
         interactiveMode: IfAvailable
 ```
@@ -258,7 +264,7 @@ never service-URL discovery, and keep lookup/cleanup errors free of secret data.
 The CLI follows a standard command structure:
 
 ```bash
-pbolt <action> <entity> [arguments]
+haspr <action> <entity> [arguments]
 ```
 
 - `<action>`: `create`, `get`, `list`, `update`, `delete`, `share`, etc.
@@ -268,17 +274,17 @@ pbolt <action> <entity> [arguments]
 
 **Create a password resource:**
 ```bash
-pbolt create resource --name "Production Database" --password "super-secret-password"
+haspr create resource --name "Production Database" --password "super-secret-password"
 ```
 
 **List users:**
 ```bash
-pbolt list user --column id,username,role
+haspr list user --column id,username,role
 ```
 
 **Share a password:**
 ```bash
-pbolt share resource --id <RESOURCE_ID> --type 1 --user <USER_ID>
+haspr share resource --id <RESOURCE_ID> --type 1 --user <USER_ID>
 ```
 *(Permission types: `1` = Read-only, `7` = Update, `15` = Owner, `-1` = Revoke).*
 
@@ -299,8 +305,8 @@ TOTP MFA is supported across three modes:
 Administrators can disable an account without deleting it, or enable it again:
 
 ```bash
-pbolt update user --id USER_UUID --disabled=true
-pbolt update user --id USER_UUID --disabled=false
+haspr update user --id USER_UUID --disabled=true
+haspr update user --id USER_UUID --disabled=false
 ```
 
 Omitting `--disabled` leaves the account state unchanged. Account state changes
@@ -314,7 +320,7 @@ cannot be combined with `--firstname`, `--lastname`, or `--role` in one command.
 - **Environment Secret Injection (`exec`):** Injects secrets directly into child processes without writing to shell history or disk:
   ```bash
   export GITHUB_TOKEN=passbolt://<RESOURCE_ID>
-  pbolt exec -- gh auth login
+  haspr exec -- gh auth login
   ```
 
 ### Read optional user MFA and directory details
@@ -324,11 +330,11 @@ MFA data is omitted; an explicit `false` remains false. Administrators can reque
 SCIM directory linkage in the server's original JSON schema:
 
 ```sh
-pbolt get user --id USER_UUID --scim-entry --json
-pbolt list user --json --scim-entry
-pbolt list user --json --include-mfa
-pbolt list user --mfa-enabled=false --json
-pbolt list user --column Username --column IsMFAEnabled
+haspr get user --id USER_UUID --scim-entry --json
+haspr list user --json --scim-entry
+haspr list user --json --include-mfa
+haspr list user --mfa-enabled=false --json
+haspr list user --column Username --column IsMFAEnabled
 ```
 
 MFA filtering is tri-state: omitting `--mfa-enabled` leaves the filter unset.
@@ -348,7 +354,7 @@ not returned by the server, and render as blank table cells instead of panicking
 Using your configured connection, request account recovery mail by username:
 
 ```sh
-pbolt recover user --username ada@example.com
+haspr recover user --username ada@example.com
 ```
 
 For an account that has not completed setup, this renews the invitation.
@@ -359,8 +365,8 @@ Success does not confirm that an account exists or that an email was delivered.
 Promote an existing member to manager, or demote a manager while retaining membership:
 
 ```sh
-pbolt update group --id GROUP_UUID --manager USER_UUID
-pbolt update group --id GROUP_UUID --user USER_UUID
+haspr update group --id GROUP_UUID --manager USER_UUID
+haspr update group --id GROUP_UUID --user USER_UUID
 ```
 
 Demotion requires the SDK to send an explicit `is_admin: false` membership update.
@@ -377,14 +383,14 @@ error may follow a partially applied server change, so reread before retrying.
 Read a plugin's organization settings as JSON:
 
 ```sh
-pbolt get organization-settings --plugin email-notifications
+haspr get organization-settings --plugin email-notifications
 ```
 
 Submit a plugin-specific JSON object from a file or stdin:
 
 ```sh
-pbolt update organization-settings --plugin email-notifications --input-file notifications.json
-pbolt update organization-settings --plugin email-notifications --input-file - < notifications.json
+haspr update organization-settings --plugin email-notifications --input-file notifications.json
+haspr update organization-settings --plugin email-notifications --input-file - < notifications.json
 ```
 
 Updates are silent by default. Add `--json` to print the server's response.
@@ -399,8 +405,8 @@ Delete or disable settings where supported. Some plugins have one settings
 record; others require a settings UUID returned by their API:
 
 ```sh
-pbolt delete organization-settings --plugin directory-sync
-pbolt delete organization-settings --plugin self-registration --id SETTINGS_UUID
+haspr delete organization-settings --plugin directory-sync
+haspr delete organization-settings --plugin self-registration --id SETTINGS_UUID
 ```
 
 The client supports these operations; availability and permissions also depend
@@ -432,7 +438,7 @@ completion, filtered by the command's supported operations.
 
 ## ⚖️ Trademark Notice
 
-*Passbolt is a registered trademark of Passbolt SA. **pbolt** is an independent community project and is not affiliated with, endorsed by, or sponsored by Passbolt SA.*
+*Passbolt is a registered trademark of Passbolt SA. **Haspr** is an independent community project and is not affiliated with, endorsed by, or sponsored by Passbolt SA.*
 
 ---
 

@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"cel.dev/cel-go/cel"
-	"github.com/pbolt-dev/go-pbolt-cli/internal/util"
-	"github.com/pbolt-dev/go-pbolt/api"
+	"github.com/haspr-dev/go-haspr-cli/internal/util"
+	"github.com/haspr-dev/go-haspr/api"
 )
 
 var groupColumns = util.NewColumnRegistry("groups", []util.ColumnSpec[api.Group]{

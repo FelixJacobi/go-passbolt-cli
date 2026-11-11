@@ -5,8 +5,8 @@ import (
 	"errors"
 	"os"
 
-	"github.com/pbolt-dev/go-pbolt-cli/internal/agent"
-	"github.com/pbolt-dev/go-pbolt/api"
+	"github.com/haspr-dev/go-haspr-cli/internal/agent"
+	"github.com/haspr-dev/go-haspr/api"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

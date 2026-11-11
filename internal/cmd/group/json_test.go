@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pbolt-dev/go-pbolt-cli/internal/util"
-	"github.com/pbolt-dev/go-pbolt/api"
+	"github.com/haspr-dev/go-haspr-cli/internal/util"
+	"github.com/haspr-dev/go-haspr/api"
 )
 
 // GroupJSONOutput's Deleted/UserCount must emit even when false/0 so that

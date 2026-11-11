@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pbolt-dev/go-pbolt/api"
+	"github.com/haspr-dev/go-haspr/api"
 )
 
 // SetResourceExpiry updates only the expiry date of a resource.

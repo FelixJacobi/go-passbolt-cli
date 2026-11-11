@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pbolt-dev/go-pbolt-cli/internal/util"
-	"github.com/pbolt-dev/go-pbolt/api"
+	"github.com/haspr-dev/go-haspr-cli/internal/util"
+	"github.com/haspr-dev/go-haspr/api"
 	"github.com/spf13/viper"
 )
 
@@ -31,11 +31,16 @@ func TestCloudValidationPrecedesAuthentication(t *testing.T) {
 	}
 }
 func TestHelperExecutableArguments(t *testing.T) {
-	for _, protocol := range []string{"git", "docker"} {
-		got := HelperArguments(protocol+"-credential-passbolt.exe", []string{"get"})
-		if !reflect.DeepEqual(got, []string{"credential-helper", protocol, "get"}) {
-			t.Fatal(got)
+	for _, brand := range []string{"haspr", "pbolt", "passbolt"} {
+		for _, protocol := range []string{"git", "docker"} {
+			got := HelperArguments(protocol+"-credential-"+brand+".exe", []string{"get"})
+			if !reflect.DeepEqual(got, []string{"credential-helper", protocol, "get"}) {
+				t.Fatalf("brand %s protocol %s: %v", brand, protocol, got)
+			}
 		}
+	}
+	if got := HelperArguments("haspr", []string{"get", "resource"}); strings.Join(got, " ") != "get resource" {
+		t.Fatal(got)
 	}
 	if got := HelperArguments("passbolt", []string{"get", "resource"}); strings.Join(got, " ") != "get resource" {
 		t.Fatal(got)

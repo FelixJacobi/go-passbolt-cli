@@ -12,7 +12,7 @@ import (
 
 	"golang.org/x/sys/windows"
 
-	"github.com/pbolt-dev/go-pbolt-cli/internal/util/securefile/winacl"
+	"github.com/haspr-dev/go-haspr-cli/internal/util/securefile/winacl"
 )
 
 // hostsFile is a system file this process should not own, even elevated.

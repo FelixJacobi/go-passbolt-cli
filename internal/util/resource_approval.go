@@ -2,8 +2,8 @@ package util
 
 import (
 	"context"
-	"github.com/pbolt-dev/go-pbolt/api"
-	"github.com/pbolt-dev/go-pbolt/helper"
+	"github.com/haspr-dev/go-haspr/api"
+	"github.com/haspr-dev/go-haspr/helper"
 )
 
 // ResourceApproval is scoped to a serialized agent invocation and called before

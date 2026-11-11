@@ -22,9 +22,9 @@ import (
 	"github.com/ProtonMail/gopenpgp/v3/crypto"
 	dockerclient "github.com/docker/docker-credential-helpers/client"
 	dockercredentials "github.com/docker/docker-credential-helpers/credentials"
-	"github.com/pbolt-dev/go-pbolt-cli/internal/agent"
-	"github.com/pbolt-dev/go-pbolt-cli/internal/util"
-	"github.com/pbolt-dev/go-pbolt/api"
+	"github.com/haspr-dev/go-haspr-cli/internal/agent"
+	"github.com/haspr-dev/go-haspr-cli/internal/util"
+	"github.com/haspr-dev/go-haspr/api"
 	"github.com/spf13/viper"
 	"io"
 )

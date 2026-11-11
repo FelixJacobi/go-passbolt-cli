@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/pbolt-dev/go-pbolt/api"
+	"github.com/haspr-dev/go-haspr/api"
 )
 
 // benchResourceSizes mirrors the util-package tiers: small / large / enterprise

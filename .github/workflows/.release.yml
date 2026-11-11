@@ -62,7 +62,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Verify Build
-        run: dist/pbolt_linux_amd64_v1/pbolt -v
+        run: dist/haspr_linux_amd64_v1/haspr -v
 
       - name: Upload Homebrew Formula
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -73,5 +73,5 @@ jobs:
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: go-passbolt-cli-artifacts
+          name: go-haspr-cli-artifacts
           path: dist/

@@ -8,9 +8,9 @@ import (
 	"strings"
 
 	dockercredentials "github.com/docker/docker-credential-helpers/credentials"
-	"github.com/pbolt-dev/go-pbolt-cli/internal/credential"
-	"github.com/pbolt-dev/go-pbolt-cli/internal/util"
-	"github.com/pbolt-dev/go-pbolt/api"
+	"github.com/haspr-dev/go-haspr-cli/internal/credential"
+	"github.com/haspr-dev/go-haspr-cli/internal/util"
+	"github.com/haspr-dev/go-haspr/api"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -171,9 +171,9 @@ func HelperArguments(program string, args []string) []string {
 	name := strings.TrimSuffix(strings.ToLower(filepath.Base(program)), ".exe")
 	var protocol string
 	switch name {
-	case "git-credential-passbolt":
+	case "git-credential-haspr", "git-credential-pbolt", "git-credential-passbolt":
 		protocol = "git"
-	case "docker-credential-passbolt":
+	case "docker-credential-haspr", "docker-credential-pbolt", "docker-credential-passbolt":
 		protocol = "docker"
 	default:
 		return args

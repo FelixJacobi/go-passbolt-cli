@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/pbolt-dev/go-pbolt-cli/internal/cmd/folder"
-	"github.com/pbolt-dev/go-pbolt-cli/internal/cmd/resource"
+	"github.com/haspr-dev/go-haspr-cli/internal/cmd/folder"
+	"github.com/haspr-dev/go-haspr-cli/internal/cmd/resource"
 	"github.com/spf13/cobra"
 )
 

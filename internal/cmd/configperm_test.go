@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pbolt-dev/go-pbolt-cli/internal/util"
+	"github.com/haspr-dev/go-haspr-cli/internal/util"
 	"github.com/spf13/viper"
 )
 
@@ -69,7 +69,7 @@ func useDefaultConfig(t *testing.T) string {
 	if err != nil {
 		t.Fatalf("UserConfigDir: %v", err)
 	}
-	return filepath.Join(confDir, "go-passbolt-cli")
+	return filepath.Join(confDir, "haspr")
 }
 
 // TestConfigure_CustomPathIsOwnerOnly is the reported bug: --config wrote 0644.
@@ -99,7 +99,7 @@ func TestConfigure_DefaultPathIsOwnerOnly(t *testing.T) {
 		t.Fatalf("configure: %v", err)
 	}
 
-	if got := modeOf(t, filepath.Join(dir, "go-passbolt-cli.toml")); got != 0600 {
+	if got := modeOf(t, filepath.Join(dir, "haspr.toml")); got != 0600 {
 		t.Errorf("file mode = %04o, want 0600", got)
 	}
 	if got := modeOf(t, dir); got != 0700 {
@@ -115,7 +115,7 @@ func TestInitConfig_RepairsUnparsableDefaultFile(t *testing.T) {
 	if err := os.MkdirAll(dir, 0700); err != nil {
 		t.Fatal(err)
 	}
-	path := filepath.Join(dir, "go-passbolt-cli.toml")
+	path := filepath.Join(dir, "haspr.toml")
 	if err := os.WriteFile(path, []byte("not = = valid toml\n"), 0600); err != nil {
 		t.Fatal(err)
 	}
@@ -226,7 +226,7 @@ func TestInitConfig_SymlinkedDefaultConfigIsQuiet(t *testing.T) {
 	if err := os.Chmod(target, 0644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.Symlink(target, filepath.Join(dir, "go-passbolt-cli.toml")); err != nil {
+	if err := os.Symlink(target, filepath.Join(dir, "haspr.toml")); err != nil {
 		t.Fatal(err)
 	}
 
@@ -278,7 +278,7 @@ func TestInitConfig_HardensTheConfigViperActuallyUses(t *testing.T) {
 	if err := os.MkdirAll(dir, 0700); err != nil {
 		t.Fatal(err)
 	}
-	jsonPath := filepath.Join(dir, "go-passbolt-cli.json")
+	jsonPath := filepath.Join(dir, "haspr.json")
 	if err := os.WriteFile(jsonPath, []byte(`{"serverAddress":"https://json.example.com"}`), 0600); err != nil {
 		t.Fatal(err)
 	}
@@ -296,7 +296,7 @@ func TestInitConfig_HardensTheConfigViperActuallyUses(t *testing.T) {
 	if err := runConfigure(t); err != nil {
 		t.Fatalf("configure: %v", err)
 	}
-	if _, err := os.Lstat(filepath.Join(dir, "go-passbolt-cli.toml")); err == nil {
+	if _, err := os.Lstat(filepath.Join(dir, "haspr.toml")); err == nil {
 		t.Error("configure wrote a .toml beside the .json that viper picks up first")
 	}
 	written, err := os.ReadFile(jsonPath)

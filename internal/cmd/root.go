@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pbolt-dev/go-pbolt-cli/internal/util"
-	"github.com/pbolt-dev/go-pbolt-cli/internal/util/securefile"
+	"github.com/haspr-dev/go-haspr-cli/internal/util"
+	"github.com/haspr-dev/go-haspr-cli/internal/util/securefile"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 
@@ -22,14 +22,14 @@ var cfgFile string
 var cfgPath string
 
 // defaultConfigFile is what configure creates when there is no config yet.
-const defaultConfigFile = "go-passbolt-cli.toml"
+const defaultConfigFile = "haspr.toml"
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = makerootCmd()
 
 func makerootCmd() *cobra.Command {
 	return &cobra.Command{
-		Use:          "pbolt",
+		Use:          "haspr",
 		Short:        "A CLI tool to interact with Passbolt.",
 		Long:         `A CLI tool to interact with Passbolt.`,
 		SilenceUsage: true,
@@ -53,8 +53,10 @@ func Execute() {
 		binName := strings.TrimSuffix(strings.ToLower(filepath.Base(os.Args[0])), ".exe")
 		if strings.Contains(binName, "passbolt") {
 			rootCmd.Use = "passbolt"
-		} else {
+		} else if strings.Contains(binName, "pbolt") {
 			rootCmd.Use = "pbolt"
+		} else {
+			rootCmd.Use = "haspr"
 		}
 	}
 	os.Args = append([]string{os.Args[0]}, HelperArguments(os.Args[0], os.Args[1:])...)
@@ -67,6 +69,16 @@ func Execute() {
 	}
 	util.FlushOutputs()
 	util.WarnReplacements()
+}
+
+func findConfigFile(dir, base string) string {
+	for _, ext := range []string{".toml", ".json", ".yaml", ".yml"} {
+		path := filepath.Join(dir, base+ext)
+		if _, err := os.Stat(path); err == nil {
+			return path
+		}
+	}
+	return ""
 }
 
 func configureRoot() {
@@ -179,16 +191,25 @@ func initConfig() {
 			util.Exit(1)
 		}
 
+		hasprDir := filepath.Join(confDir, "haspr")
 		pboltDir := filepath.Join(confDir, "pbolt")
-		confDir = filepath.Join(confDir, "go-passbolt-cli")
-		_ = os.MkdirAll(confDir, 0o700)
+		legacyDir := filepath.Join(confDir, "go-passbolt-cli")
+		_ = os.MkdirAll(hasprDir, 0o700)
 
-		newConfigPath = filepath.Join(confDir, defaultConfigFile)
-		viper.AddConfigPath(pboltDir)
-		viper.AddConfigPath(confDir)
-		viper.SetConfigType("toml")
-		viper.SetConfigName("pbolt")
-		viper.SetConfigName("go-passbolt-cli")
+		newConfigPath = filepath.Join(hasprDir, defaultConfigFile)
+		if p := findConfigFile(hasprDir, "haspr"); p != "" {
+			viper.SetConfigFile(p)
+		} else if p := findConfigFile(pboltDir, "pbolt"); p != "" {
+			viper.SetConfigFile(p)
+		} else if p := findConfigFile(legacyDir, "go-passbolt-cli"); p != "" {
+			viper.SetConfigFile(p)
+		} else {
+			viper.AddConfigPath(hasprDir)
+			viper.AddConfigPath(pboltDir)
+			viper.AddConfigPath(legacyDir)
+			viper.SetConfigType("toml")
+			viper.SetConfigName("haspr")
+		}
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

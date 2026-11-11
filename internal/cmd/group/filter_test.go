@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pbolt-dev/go-pbolt/api"
+	"github.com/haspr-dev/go-haspr/api"
 )
 
 // groupColumns.Filter runs CEL over api.Group, including the int user_count

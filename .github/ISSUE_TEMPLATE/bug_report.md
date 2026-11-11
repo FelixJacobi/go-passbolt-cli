@@ -19,7 +19,7 @@ A clear and concise description of how to reproduce the bug.
  - Edition: [e.g. Cloud / PRO / Community]
  - Version [e.g. 3.5.0]
 
-**go-passbolt-cli Version (please complete the following information):**
+**go-haspr-cli Version (please complete the following information):**
  - OS: [e.g. linux]
  - Version [e.g. v0.1.7]
 

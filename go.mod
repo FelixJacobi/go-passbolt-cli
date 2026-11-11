@@ -1,4 +1,4 @@
-module github.com/pbolt-dev/go-pbolt-cli
+module github.com/haspr-dev/go-haspr-cli
 
 go 1.27.3
 
@@ -7,7 +7,7 @@ require (
 	github.com/Microsoft/go-winio v0.6.4
 	github.com/ProtonMail/gopenpgp/v3 v3.5.2
 	github.com/docker/docker-credential-helpers v0.9.12
-	github.com/pbolt-dev/go-pbolt v0.9.0
+	github.com/haspr-dev/go-haspr v0.10.0
 	github.com/pterm/pterm v0.12.84
 	github.com/rogpeppe/go-internal v1.16.0
 	github.com/spf13/cobra v1.10.2

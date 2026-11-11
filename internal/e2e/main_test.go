@@ -12,10 +12,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pbolt-dev/go-pbolt-cli/internal/cmd"
-	"github.com/pbolt-dev/go-pbolt-cli/internal/e2e/commands"
-	"github.com/pbolt-dev/go-pbolt-cli/internal/e2e/server"
-	"github.com/pbolt-dev/go-pbolt/api"
+	"github.com/haspr-dev/go-haspr-cli/internal/cmd"
+	"github.com/haspr-dev/go-haspr-cli/internal/e2e/commands"
+	"github.com/haspr-dev/go-haspr-cli/internal/e2e/server"
+	"github.com/haspr-dev/go-haspr/api"
 	"github.com/rogpeppe/go-internal/testscript"
 )
 

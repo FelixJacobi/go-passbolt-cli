@@ -6,6 +6,13 @@ Releases before this file was introduced are documented in the [GitHub releases]
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-11
+### Changed
+- Renamed Go module to `github.com/haspr-dev/go-haspr-cli`
+- Updated SDK dependency to `github.com/haspr-dev/go-haspr v0.10.0`
+- Adopted `haspr` CLI branding with primary executable `haspr` and helper executables `git-credential-haspr`, `docker-credential-haspr`
+- Added backward compatibility aliases for `pbolt` and `passbolt` binaries and configuration directories
+
 ## [0.6.0] - 2026-11-10
 ### Added
 - **Authentication Agent**: Opt-in in-memory authentication agent (`--agent`) reusing authenticated sessions behind interactive approval dialogs (desktop, terminal, pinentry) with idle expiry.

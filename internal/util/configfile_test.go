@@ -10,7 +10,7 @@ import (
 
 	"github.com/spf13/viper"
 
-	"github.com/pbolt-dev/go-pbolt-cli/internal/util/securefile"
+	"github.com/haspr-dev/go-haspr-cli/internal/util/securefile"
 )
 
 // skipWithoutPOSIXModes skips a test whose whole point is a permission bit.

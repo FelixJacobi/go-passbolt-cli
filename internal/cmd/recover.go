@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/pbolt-dev/go-pbolt-cli/internal/cmd/user"
+	"github.com/haspr-dev/go-haspr-cli/internal/cmd/user"
 	"github.com/spf13/cobra"
 )
 

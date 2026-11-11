@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pbolt-dev/go-pbolt/api"
+	"github.com/haspr-dev/go-haspr/api"
 )
 
 func TestUserDetailOutputIncludesState(t *testing.T) {

@@ -1,9 +1,45 @@
 version: 2
 
-project_name: go-pbolt-cli
+project_name: go-haspr-cli
 checksum:
   name_template: 'checksums.txt'
 builds:
+  - id: haspr
+    env: [CGO_ENABLED=0]
+    flags:
+      - -trimpath
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    binary: haspr
+  - id: git-credential-haspr
+    env: [CGO_ENABLED=0]
+    flags:
+      - -trimpath
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    binary: git-credential-haspr
+  - id: docker-credential-haspr
+    env: [CGO_ENABLED=0]
+    flags:
+      - -trimpath
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    binary: docker-credential-haspr
   - id: pbolt
     env: [CGO_ENABLED=0]
     flags:
@@ -65,7 +101,7 @@ builds:
       - arm64
     binary: docker-credential-passbolt
 archives:
-  - name_template: "pbolt_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+  - name_template: "haspr_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     files:
       - completion/*
       - man/*
@@ -77,17 +113,17 @@ release:
   header: |
     ## Release {{ .Tag }} - ({{ .Date }})
 nfpms:
-  - maintainer: pbolt contributors <https://github.com/pbolt-dev>
+  - maintainer: haspr contributors <https://github.com/haspr-dev>
     description: A CLI tool to interact with Passbolt.
-    homepage: https://github.com/pbolt-dev/go-pbolt-cli
+    homepage: https://github.com/haspr-dev/go-haspr-cli
     license: MIT
     contents:
       - src: completion/bash
-        dst: /usr/share/bash-completion/completions/pbolt
+        dst: /usr/share/bash-completion/completions/haspr
       - src: completion/zsh
-        dst: /usr/share/zsh/site-functions/_pbolt
+        dst: /usr/share/zsh/site-functions/_haspr
       - src: completion/fish
-        dst: /usr/share/fish/vendor_completions.d/pbolt.fish
+        dst: /usr/share/fish/vendor_completions.d/haspr.fish
       - src: man/*
         dst: /usr/share/man/man1/
     recommends:
@@ -96,19 +132,20 @@ nfpms:
       - deb
       - rpm
 brews:
-  - homepage: https://github.com/pbolt-dev/go-pbolt-cli
+  - name: haspr
+    homepage: https://github.com/haspr-dev/go-haspr-cli
     license: "MIT"
     skip_upload: true
     description: "A CLI tool to interact with Passbolt, an open source password manager for teams"
     directory: Formula
     install: |
-      bin.install "pbolt", "git-credential-pbolt", "docker-credential-pbolt", "git-credential-passbolt", "docker-credential-passbolt"
+      bin.install "haspr", "git-credential-haspr", "docker-credential-haspr", "pbolt", "git-credential-pbolt", "docker-credential-pbolt", "git-credential-passbolt", "docker-credential-passbolt"
       # Compatibility symlink
-      bin.install_symlink "pbolt" => "passbolt"
-      bash_completion.install "completion/bash" => "pbolt"
-      zsh_completion.install "completion/zsh" => "_pbolt"
-      fish_completion.install "completion/fish" => "pbolt.fish"
+      bin.install_symlink "haspr" => "passbolt"
+      bash_completion.install "completion/bash" => "haspr"
+      zsh_completion.install "completion/zsh" => "_haspr"
+      fish_completion.install "completion/fish" => "haspr.fish"
       man1.install Dir["man/*"]
     repository:
-      owner: pbolt-dev
+      owner: haspr-dev
       name: homebrew-tap
