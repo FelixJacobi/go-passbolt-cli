@@ -37,18 +37,78 @@ If you are developing Go applications and need an API client, check out our SDK:
 
 ## 📦 Installation
 
-### Download Pre-built Binary
-Download the archive or deb/rpm package for Linux, macOS, or Windows from our [Releases page](https://github.com/haspr-dev/go-haspr-cli/releases/latest).
+### Linux Package Repositories (Debian, Ubuntu, Fedora, RHEL, Rocky, AlmaLinux, openSUSE)
 
-For Debian/Ubuntu:
-```bash
-sudo dpkg -i haspr_*_linux_amd64.deb
-```
+The easiest way to install and stay updated is using our universal setup script, which automatically configures the appropriate repository and GPG keys for your Linux distribution:
 
-### Via APT (Debian / Ubuntu)
 ```bash
 curl -fsSL https://package.haspr.dev/setup.sh | sudo bash
+```
+
+Then install `haspr` using your native package manager:
+
+**Debian / Ubuntu:**
+```bash
 sudo apt install haspr
+```
+
+**Fedora / RHEL / Rocky Linux / AlmaLinux / CentOS:**
+```bash
+sudo dnf install haspr
+# or on older RHEL/CentOS:
+sudo yum install haspr
+```
+
+**openSUSE / SLES:**
+```bash
+sudo zypper install haspr
+```
+
+<details>
+<summary><b>Manual Repository Configuration</b></summary>
+
+#### Debian & Ubuntu (APT)
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://package.haspr.dev/haspr-archive-keyring.gpg | sudo tee /etc/apt/keyrings/haspr-archive-keyring.gpg > /dev/null
+echo "deb [signed-by=/etc/apt/keyrings/haspr-archive-keyring.gpg] https://package.haspr.dev/ /" | sudo tee /etc/apt/sources.list.d/haspr.list
+sudo apt update
+sudo apt install haspr
+```
+
+#### Fedora, RHEL & Clones (DNF / YUM)
+```bash
+sudo rpm --import https://package.haspr.dev/gpgkey
+sudo tee /etc/yum.repos.d/haspr.repo << 'EOF'
+[haspr]
+name=Haspr Packages
+baseurl=https://package.haspr.dev/rpm/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://package.haspr.dev/gpgkey
+EOF
+sudo dnf install haspr
+```
+
+#### openSUSE (Zypper)
+```bash
+sudo zypper ar -f -c https://package.haspr.dev/rpm/ haspr
+sudo zypper --gpg-auto-import-keys ref
+sudo zypper install haspr
+```
+</details>
+
+### Download Pre-built Binary
+Download the archive, `.deb`, or `.rpm` package for Linux, macOS, or Windows from our [Releases page](https://github.com/haspr-dev/go-haspr-cli/releases/latest).
+
+Manual package installation:
+```bash
+# Debian / Ubuntu
+sudo dpkg -i haspr_*_linux_amd64.deb
+
+# Fedora / RHEL / Rocky / openSUSE
+sudo rpm -ivh haspr-*.x86_64.rpm
 ```
 
 ### Via Homebrew
